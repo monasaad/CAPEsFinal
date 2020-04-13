@@ -49,16 +49,15 @@ def home():
 
 
 # vendor list page
-@app.route('/list')
+@app.route('/list', methods=["GET", "POST"])
 def ViewListVendors():
     if session['logged_in'] == False:  return render_template('Login.html')
-    global user
     user = session['username']
     conn = sqlite3.connect("CAPEsDatabase.db")
     cursor = conn.cursor()
     result = cursor.execute(" SELECT * FROM  vendor ")
     rows = result.fetchall()
-    return render_template('beneficiary/vendor-list.html', c=rows, user=user)
+    return render_template('beneficiary/vendor-list.html', c=rows)
 
 
 # vendor details page
@@ -74,6 +73,7 @@ def ViewVendorDetails(v_username):
         cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + v_username + "'")
         rows = cur.fetchall()
     return render_template('beneficiary/vendor-details.html', c=result, users=v_username, user=user, rows=rows)
+
 
 
 # Beneficiary  recommecndation page
@@ -751,14 +751,15 @@ def print_result(accepted_list, result, w):
                 exam = row[3]
                 link = row[4]
 
-                res += str(
-                    count) + "- " + certificate + " provided from " + vendor + " it's own exam is " + exam + " you can see more in <a href=\"" + link + '\">here</a></br></br>'
-
+                """res += str(
+                    count) + "- " + certificate + " provided from " + vendor + " it's own exam is " + exam + " you can see more in <a href=\"" + link + '\">here</a></br></br>'"""
+                res += str(count) + "- " + certificate + ".</br></br>"
                 data = (user, certificate, vendor, exam, link)
                 uploadResult(data)
                 count += 1
             else:
                 continue
+        res += ' If you want more information you can go to <b>Recommendation Tab<b></br>'
     else:
         # print("Sorry, I can not found the most matching certificate for you")
         res = 'Sorry, I can not found the most matching certificate for you'
@@ -799,7 +800,7 @@ def findCertificate():
 
     cursor.execute("SELECT  keywords FROM log WHERE qNumer=?", [w])
     result = cursor.fetchall()
-    print(result)
+    #print(result)
     a = []
     for k in range(1):
         a.append([])

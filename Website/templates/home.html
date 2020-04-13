@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home</title>
+<!--    <link rel="stylesheet" type="text/css" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/styles.min.css">
+     <link type="text/css" href="/static/assets/css/style.min.css" rel="stylesheet">
+    -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+      <link rel="stylesheet" href="{{ url_for('static', filename='/assets/js/jquery.min.js') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='/assets/bootstrap/js/bootstrap.min.js') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='/assets/js/script.min.js') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='/assets/js/jquery.min.js') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='/assets/bootstrap/js/bootstrap.min.js') }}">
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
+      <script type="text/javascript"  src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+
+</head>
+
+<body>
+    <!-- HEADER -->
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
+        <div class="container"><a class="navbar-brand logo" href="#" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navbarNav">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="/home">Home</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link " href="/add">Add new professional exam</a></li>
+
+                         {% if session['logged_in'] == True %}
+                              <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout
+                         {% else %}
+                             <li class="nav-item" role="presentation"><a class="nav-link" href="/">Login
+                         {% endif %}
+                        </a></li>
+                </ul>
+        </div>
+        </div>
+    </nav>
+    <main class="page hire-me-page">
+        <section class="portfolio-block hire-me">
+            <div class="container">
+                        <h2 class="text-left" class="font-weight-bold ">Professional Exams List</h2>
+                     <!--   <input type="text" class="form-control" id="Search" aria-describedby="Search" placeholder="Search"> -->
+
+<br/>
+<br/>
+<br/>
+{% for row in rows  %}
+              <button class="collapsible gradient btn-lg"  style = " width: 100% " data-toggle="collapse" data-target="#i-{{loop.index}}" role="button">
+        		{{ row[1] }}
+        	</button>
+
+        	<div class="collapse" id="i-{{loop.index}}">
+
+        	   <table width='100%' class="table table-striped">
+
+                    <tr>
+                                <th width='25%'class="text-left">Profissional Eexams</th>
+                                <td  width='75%'>{{ row[1].capitalize() }}</td>
+                            </tr>
+                            <tr>
+                                <th width='25%' class="text-left">Certificate</th>
+                                <td  width='75%'>{{ (row[2]).capitalize()  }}</td>
+                            </tr>
+                            <tr>
+                                <th width='25%' class="text-left">Major</th>
+                                <td  width='75%'>
+                                    {% if row[3] == 'csciscys' %}
+                                     CS, CIS ,CYS
+                                    {% elif row[3] == 'csciscysai' %}
+                                     CS, CIS ,CYS, AI
+                                    {% elif row[3] == 'csai' %}
+                                     CS, AI
+                                    {% elif row[3] == 'cscys' %}
+                                     CS ,CYS
+                                    {% elif row[3] == 'cscis' %}
+                                     CS, CIS
+                                    {% elif row[3] == 'ciscys' %}
+                                     CIS ,CYS
+                                    {% elif row[3] == 'ai' %}
+                                     AI
+                                    {% elif row[3] == 'cys' %}
+                                     CYS
+                                    {% elif row[3] == 'cs' %}
+                                     CS
+                                    {% elif row[3] == 'cis' %}
+                                        CIS
+                                    {% elif row[3] == 'ciscys' %}
+                                        CS CYS AI
+                                    {% elif row[3] == 'cscysai' %}
+                                        CS CYS AI
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <th width='25%' class="text-left">Suits for Student in level</th>
+
+                                 <td  width='75%'>{{ row[4] }}</td>
+                            </tr>
+
+                            <tr>
+                                <th width='25%' class="text-left">Field</th>
+
+                                 <td  width='75%'>{{ (row[5]).capitalize() }}</td>
+                            </tr>
+               {% if  (row[6]).lower() != ('null').lower()  %}
+                            <tr>
+                                <th width='25%' class="text-left">Prerequisite</th>
+
+                                 <td  width='75%'>{{ (row[6]).capitalize() }}</td>
+                            </tr>
+               {% endif %}
+                       {% if  (row[7]).lower() != ('null').lower()  %}
+                            <tr>
+                                <th width='25%' class="text-left">Pre-certificate</th>
+
+                                 <td  width='75%'>{{ (row[7]).capitalize() }}</td>
+                            </tr>
+                       {% endif %}
+                       {% if  (row[8]).lower() != ('null').lower()  %}
+                            <tr>
+                                <th width='25%'class="text-left">Programing language</th>
+                               <td  width='75%'>{{ (row[8]).capitalize() }}</td>
+                            </tr>
+                       {% endif %}
+
+                            <tr>
+                                <th width='25%' class="text-left">Duration of preparing for the exam </th>
+                                <td width='75%'>{{ (row[9]).capitalize() }}</td>
+                            </tr>
+                            <tr>
+                                <th width='25%' class="text-left">Description</th>
+                                <td  width='75%' class="text-left"  >{{ (row[10]).capitalize() }}</td>
+                            </tr>
+
+                            <tr>
+                                <th width='25%' class="text-left" >Professional exam's information needs update or delete ?</th>
+                              <td  width='100%'>
+   <form  id="edit" style="display: inline; -webkit-box-shadow: none;	-moz-box-shadow: none;	box-shadow: none;"  method='POST' enctype="multipart/form-data">
+        <input  type="text" id="tit" style="display: none;  visibility: hidden;" value="{{ row[0] }}" name='tit'>
+
+       <button    class="btn"  type="submit">
+            <i class='fa fa-edit fa-2x'  style="color:#b1b1cc;"></i>
+        </button>
+   </form>
+
+
+                              <button class="btn"  id="delete" onclick='dele("{{ row[0] }}","{{ row[1] }} ")'>
+            <i class="fa fa-trash fa-2x"  style= "color:#b1b1cc; " ></i>
+        </button>
+
+                            </td>
+                            </tr>
+
+                        </table>
+            </div>
+    <br>
+
+{% endfor %}
+
+                   </div>
+        </section>
+    </main>
+
+
+
+
+
+      <script>
+          function dele(id,title){
+
+           Swal.fire({
+           title: 'Are you sure ?',
+           text: "You will not be able to restore it.",
+           type: 'warning',
+           showCancelButton: true,
+           confirmButtonColor: '#db3058',
+           cancelButtonColor: '#0ea0ff',
+           confirmButtonText: "Yes, I'm sure"
+           }).then((result) => {
+           if (result.value) {
+               Swal.fire({
+                 position: 'center', icon: 'success', title: 'The Professional exam '+title+' has been deleted', showConfirmButton: false, timer: 2000 })
+               $('#delete').load("{{ url_for('delete', pe='ADDSHARE2') }}".replace("ADDSHARE2", id))
+               setTimeout(function(){location.reload()}, 1800);
+
+           }
+
+           })
+}
+</script>
+
+
+</body>
+
+</html>

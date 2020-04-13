@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home</title>
+   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='assets/js/script.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
+      <script type="text/javascript"  src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script type="text/javascript" src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+
+    <style>
+
+
+      #chatbox {
+        margin-left: auto;
+        margin-right: auto;
+        width: 90%;
+
+        margin-top: 60px;
+      }
+      #userInput {
+        width: 100%;
+      }
+      #textInput {
+        font-family: monospace;
+        font-size: 17px;
+            box-sizing: border-box;
+            color: #000000;
+          display: inline-block;
+            height: 40px;
+            border-radius: 25px;
+            border: 1px solid #bcbdc0;
+          width: calc(100% - 40px);
+            padding: 0 20px;
+
+      }
+      .userText {
+        color: white;
+        font-family: monospace;
+        font-size: 17px;
+        text-align: right;
+        line-height: 30px;
+      }
+      .userText span {
+        background-color: #f8f63d;
+        padding: 10px;
+        border-radius: 2px;
+      }
+      .botText {
+        color: white;
+        font-family: monospace;
+        font-size: 17px;
+        text-align: left;
+        line-height: 30px;
+      }
+      .botText span {
+        background-color: #ac36e1;
+        padding: 10px;
+        border-radius: 2px;
+      }
+      #tidbit {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 300px;
+      }
+      .boxed {
+        margin-left: auto;
+        margin-right: auto;
+        width: 900px;
+          height: auto;
+        margin-top: 60px;
+        border: 1px ;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            background-color: #f8f8f8;
+          border-radius: 10px;
+      }
+      .top_menu {
+            background-color: #bb36f0;
+            width: auto;
+            padding: 20px 0 15px;
+            box-shadow: 0 1px 30px rgba(0, 0, 0, 0.1);
+        }
+      .top_menu .title {
+            text-align: center;
+            color: #fffdfd;
+            font-size: 20px;
+
+        }
+      .bottom_wrapper {
+            width: auto;
+          height: 25px;
+            background-color: #f0f0f0;
+            padding: 20px 20px;
+            bottom: 50px;
+        }
+
+      .box {
+        border: 2px solid black;
+      }
+    </style>
+
+</head>
+<body>
+<!-- HEADER -->
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
+        <div class="container"><a class="navbar-brand logo" href="#" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navbarNav">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="/bhome">Home</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link " href="/list">Vendors</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/recommendation">Recommendation</a></li>
+                                         {% if session['logged_in'] == True %}
+                              <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout
+                         {% else %}
+                             <li class="nav-item" role="presentation"><a class="nav-link" href="/">Login
+                                         {% endif %}
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page lanidng-page"></main>
+ <div class="simple-slider">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image:url(https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE2r0Th?ver=5b7d);"></div>
+                <div class="swiper-slide" ><img  class="swiper-slide" src="static/logos/image.jpg" ></div>
+                <div class="swiper-slide" ><img  class="swiper-slide" src="static/logos/Slider1.png.jpg" ></div>
+            </div>
+
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+        </div>
+    </div>
+<!--chat-->
+<section>
+    <div class="boxed">
+
+           <div class="top_menu">
+
+        <div class="title">Chat</div>
+    </div>
+        <div id="chatbox">
+          <p class="botText">
+            <span>Hi! I'm Candice your personal ChatBot</span>
+
+              <span><br><br>What is your major?<br></span>
+          </p>
+        </div>
+          <div class="bottom_wrapper"style="
+    padding-bottom: 50px;
+">
+        <div id="userInput">
+          <input id="textInput" type="text" name="msg" placeholder="Write here..." />
+        </div>
+      </div>
+    </div></section><br><br>
+
+
+
+
+</body>
+<script>
+        function getBotResponse() {
+          var rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+          $("#textInput").val("");
+          $("#chatbox").append(userHtml);
+          document
+            .getElementById("userInput")
+            .scrollIntoView({ block: "start", behavior: "smooth" });
+          $.get("/get", { msg: rawText }).done(function(data) {
+            var botHtml = '<p class="botText"><span>' + data + "</span></p>";
+            $("#chatbox").append(botHtml);
+            document
+              .getElementById("userInput")
+              .scrollIntoView({ block: "start", behavior: "smooth" });
+          });
+        }
+        $("#textInput").keypress(function(e) {
+          if (e.which == 13) {
+            getBotResponse();
+          }
+        });
+</script>
+</html>

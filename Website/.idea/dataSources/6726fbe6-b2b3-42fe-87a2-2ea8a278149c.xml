@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="CAPEsDatabase">
+  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.17">
+    <root id="1">
+      <ServerVersion>3.25.1</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="main">
+      <Current>1</Current>
+    </schema>
+    <collation id="3" parent="1" name="BINARY"/>
+    <collation id="4" parent="1" name="NOCASE"/>
+    <collation id="5" parent="1" name="RTRIM"/>
+    <table id="6" parent="2" name="CA"/>
+    <table id="7" parent="2" name="ResetPassword"/>
+    <table id="8" parent="2" name="beneficiary"/>
+    <table id="9" parent="2" name="certificate"/>
+    <table id="10" parent="2" name="keyword"/>
+    <table id="11" parent="2" name="log"/>
+    <table id="12" parent="2" name="pattern"/>
+    <table id="13" parent="2" name="questions"/>
+    <table id="14" parent="2" name="response"/>
+    <table id="15" parent="2" name="result"/>
+    <table id="16" parent="2" name="sqlite_master">
+      <System>1</System>
+    </table>
+    <table id="17" parent="2" name="sqlite_sequence">
+      <System>1</System>
+    </table>
+    <table id="18" parent="2" name="vendor"/>
+    <column id="19" parent="6" name="c_id">
+      <Position>1</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="20" parent="6" name="question">
+      <Position>2</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="21" parent="6" name="answer">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="22" parent="6" name="b_id">
+      <Position>4</Position>
+      <DataType>integer|0s</DataType>
+    </column>
+    <column id="23" parent="6" name="complete_chat">
+      <Position>5</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="24" parent="6" name="response">
+      <Position>6</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <index id="25" parent="6" name="CA_c_id_uindex">
+      <ColNames>c_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="26" parent="6" name="CA_pk">
+      <ColNames>c_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>CA_c_id_uindex</UnderlyingIndexName>
+    </key>
+    <column id="27" parent="7" name="username">
+      <Position>1</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="28" parent="7" name="token">
+      <Position>2</Position>
+      <DataType>integer|0s</DataType>
+    </column>
+    <column id="29" parent="8" name="b_username">
+      <Position>1</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="30" parent="8" name="password">
+      <Position>2</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="31" parent="8" name="name_b">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="32" parent="8" name="email">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="33" parent="9" name="p_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="34" parent="9" name="name">
+      <Position>2</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="35" parent="9" name="v_username">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="36" parent="9" name="major">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="37" parent="9" name="level">
+      <Position>5</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="38" parent="9" name="field">
+      <Position>6</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="39" parent="9" name="pre_req">
+      <Position>7</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="40" parent="9" name="pre_c">
+      <Position>8</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="41" parent="9" name="prog_l">
+      <Position>9</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="42" parent="9" name="duration">
+      <Position>10</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="43" parent="9" name="description">
+      <Position>11</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="44" parent="9" name="exams">
+      <Position>12</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="45" parent="9" name="urllink">
+      <Position>13</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <index id="46" parent="9" name="certificate_p_id_uindex">
+      <ColNames>p_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="47" parent="9" name="certificate_pk">
+      <ColNames>p_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>certificate_p_id_uindex</UnderlyingIndexName>
+    </key>
+    <column id="48" parent="10" name="id_k">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="49" parent="10" name="id_c">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="50" parent="10" name="id_r">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="51" parent="10" name="keyword">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <index id="52" parent="10" name="keyword_id_k_uindex">
+      <ColNames>id_k</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="53" parent="10" name="keyword_pk">
+      <ColNames>id_k</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>keyword_id_k_uindex</UnderlyingIndexName>
+    </key>
+    <column id="54" parent="11" name="id_pk">
+      <Position>1</Position>
+      <DataType>integer|0s</DataType>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="55" parent="11" name="qNumer">
+      <Position>2</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="56" parent="11" name="userAns">
+      <Position>3</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="57" parent="11" name="textWithOutKey">
+      <Position>4</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="58" parent="11" name="keywords">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="59" parent="11" name="patternAsimilarity">
+      <Position>6</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="60" parent="11" name="question">
+      <Position>7</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <key id="61" parent="11" name="log_pk">
+      <ColNames>id_pk</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="62" parent="12" name="id_p">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="63" parent="12" name="id_r">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="64" parent="12" name="id_c">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="65" parent="12" name="anwser_p">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="66" parent="13" name="id_r">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="67" parent="13" name="id_c">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="68" parent="13" name="question">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="69" parent="14" name="id_rp">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="70" parent="14" name="id_c">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="71" parent="14" name="ans2">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="72" parent="15" name="r_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="73" parent="15" name="b_id">
+      <Position>2</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="74" parent="15" name="certificate">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="75" parent="15" name="vendor">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="76" parent="15" name="exam">
+      <Position>5</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="77" parent="15" name="link">
+      <Position>6</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <key id="78" parent="15" name="result_pk">
+      <ColNames>r_id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="79" parent="16" name="type">
+      <Position>1</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="80" parent="16" name="name">
+      <Position>2</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="81" parent="16" name="tbl_name">
+      <Position>3</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="82" parent="16" name="rootpage">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="83" parent="16" name="sql">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="84" parent="17" name="name">
+      <Position>1</Position>
+    </column>
+    <column id="85" parent="17" name="seq">
+      <Position>2</Position>
+    </column>
+    <column id="86" parent="18" name="v_username">
+      <Position>1</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="87" parent="18" name="password">
+      <Position>2</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="88" parent="18" name="description">
+      <Position>3</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="89" parent="18" name="email">
+      <Position>4</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+    <column id="90" parent="18" name="pic">
+      <Position>5</Position>
+      <DataType>TEXT|0s</DataType>
+    </column>
+  </database-model>
+</dataSource>

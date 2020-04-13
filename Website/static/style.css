@@ -1,0 +1,29 @@
+.dis {
+  display: none;
+}
+#hi {
+  background-color: #9895f7 /*#fae650  /*#4ea8dc*/;
+}
+
+body{
+	font-family: 'Varela Round', sans-serif;
+
+}
+
+h2{
+	color: #775bf3
+}
+
+thead{
+  background-color: #9895f7;
+}
+
+.btn-primary{
+	background-color: #775bf3;
+	border-color: #775bf3;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
+    background-color: #f7e97c;
+    border-color: #f7e97c; /*set the color you want here*/
+}

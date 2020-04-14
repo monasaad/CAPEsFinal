@@ -10,6 +10,7 @@ from nltk import WordNetLemmatizer
 from difflib import SequenceMatcher
 from flask_mail import Mail, Message
 import random
+import emoji as emoji
 
 user = ""
 app = Flask(__name__)
@@ -459,7 +460,10 @@ accepted_c = []
 q_count = 0
 result_preC = []
 uniq = []
-
+wave_emoji = emoji.emojize(':wave:', use_aliases=True)
+smile_emoji = emoji.emojize(':smile:', use_aliases=True)
+thumbs_emoji = emoji.emojize(':thumbs_up:', use_aliases=True)
+grimacing_emoji = emoji.emojize(':grimacing:', use_aliases=True)
 
 def getinput(input):
     global inpput
@@ -489,19 +493,20 @@ def exitProgram(x, question):
     if x == 'q':
         # TODO remove comment
         # print("CAPES: Conversation ends. Your records are saved in logs. Bye!wave_emoji")
-        res = "Conversation ends.Bye!wave_emoji" + "</br> </br> If you want to try again reload this page <3"
+        res = "Conversation ends.Bye!"+ wave_emoji + "</br> </br> If you want to try again reload this page <3"
         data_ca = (
             question, x, user, 'stopped',
-            "Conversation ends. Bye!wave_emoji")
+            "Conversation ends. Bye!"+ wave_emoji)
         uploadCA(data_ca)
         exit_flag = True
 
     elif x == 'f':
         # TODO remove comment
         # print("CAPES: Thank you for using CAPEs, Best wishes! smile_emoji")
-        res += " </br>Thank you for using CAPEs, Best wishes! smile_emoji" + "</br></br> please help us to improve CAPEs " \
-                                                                             "by fill this survey. <a href=\"https://forms.gle/PCjbY7Znetn8xNQA9\">here</a>"
-        data_ca = (question, x, user, 'complete', "Thank you for using CAPEs, Best wishes! smile_emoji")
+        res += " </br>Thank you for using CAPEs, Best wishes!"+ smile_emoji + \
+               "</br></br> please help us to improve CAPEs by fill this survey. " \
+               "<a href=\"https://forms.gle/PCjbY7Znetn8xNQA9\">here</a>"
+        data_ca = (question, x, user, 'complete', "Thank you for using CAPEs, Best wishes!"+ smile_emoji)
         uploadCA(data_ca)
         exit_flag = True
 
@@ -660,9 +665,9 @@ def checkGeneralKeyword(user_input, count):
         else:
             # TODO remove comment
             # print("CAPEs: Sorry, I did not understand you grimacing_emoji")
-            res = "Sorry, I did not understand you grimacing_emoji <br /><br /> " + temp
+            res = "Sorry, I did not understand you"+ grimacing_emoji+" <br /><br /> " + temp
             data_ca = (question_result[count], user_input, user, 'continue',
-                       "Sorry, I did not understand you grimacing_emoji and go next question")
+                       "Sorry, I did not understand you"+ grimacing_emoji +"and go next question")
             uploadCA(data_ca)
 
             # question(count)

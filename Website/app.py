@@ -383,7 +383,7 @@ def E_validate(Email):
 
 def sendmassage(token, email):
     msg = Message('Reset Password', sender='2020capes@gmail.com', recipients=[email])
-    msg.body = "Hello \n Dear user use this token to reset your password : " + token
+    msg.body = "Hello \nDear user use this token to reset your password : " + token
     mail.send(msg)
     return None
 
@@ -409,8 +409,7 @@ def ForgotPassword():
             con.commit()
             cur.close()
             con.close()
-            """
-            sendmassage(token,email)"""
+            sendmassage(token, email)
             session['username'] = username
             return redirect(url_for('reset'))
     if request.method == 'GET':

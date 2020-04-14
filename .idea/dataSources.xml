@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="CAPEsDatabase" uuid="8f08d3eb-615f-422c-a3c2-918c64633b56">
+    <data-source source="LOCAL" name="CAPEsDatabase" uuid="c9cacb51-b2d4-4091-93c5-24aada25547a">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\mahaD\Desktop\CAPEsFinal\CAPEsDatabase.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/CAPEsDatabase.db</jdbc-url>
     </data-source>
   </component>
 </project>

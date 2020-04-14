@@ -759,7 +759,7 @@ def print_result(accepted_list, result, w):
                 count += 1
             else:
                 continue
-        res += ' If you want more information you can go to <b>Recommendation Tab<b></br>'
+        res += ' If you want more information you can go to <b>Recommendation Tab</b></br>'
     else:
         # print("Sorry, I can not found the most matching certificate for you")
         res = 'Sorry, I can not found the most matching certificate for you'

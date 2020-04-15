@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Previous Recommendation</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Previous Recommendation </title>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -30,13 +28,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
 </head>
-
 <body>
 <!-- HEADER -->
     <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
         <div class="container"><a class="navbar-brand logo" href="/bhome" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div
-                class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="nav navbar-nav ml-auto">
                     <li class="nav-item" role="presentation"><a class="nav-link" href="/bhome">Home</a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="/list">Vendors</a></li>
@@ -52,55 +48,48 @@
         </div>
         </div>
     </nav>
+
+<!-- INSIDE -->
   <main class="page cv-page">
         <section class="portfolio-block block-intro">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-8">
-                        <h2 class="text-left">Profissional Eexams List</h2>
-                     <!--   <input type="text" class="form-control" id="Search" aria-describedby="Search" placeholder="Search"> -->
+                        <h2 class="text-left">Professional Exams List</h2>
                     </div>
                 </div>
             </div>
             <br>
             <div class="container">
-<br/>
-{% for row in rows  %}
-            <button class="collapsible gradient btn-lg"  style = " width: 100% " data-toggle="collapse" data-target="#i-{{loop.index}}" role="button">
-        		{{ row[4].capitalize() }}
-        	</button>
-
-        	<div class="collapse" id="i-{{loop.index}}">
-
-        	   <table width='100%' class="table table-striped">
-
-                    <tr>
+                <br/>
+                {% for row in rows  %}
+                <button class="collapsible gradient btn-lg"  style = " width: 100% " data-toggle="collapse" data-target="#i-{{loop.index}}" role="button">
+                    {{ row[4].capitalize() }}
+                </button>
+                    <div class="collapse" id="i-{{loop.index}}">
+                       <table width='100%' class="table table-striped">
+                            <tr>
                                 <th width='25%'class="text-left">Professional Exams</th>
                                 <td  width='75%'>{{ row[4].capitalize() }}</td>
-                    </tr>
-                    <tr>
+                            </tr>
+                            <tr>
                                 <th width='25%' class="text-left">Vendor</th>
                                 <td  width='75%'>{{ row[3] }}</td>
-                    </tr>
-                    <tr>
+                            </tr>
+                            <tr>
                                 <th width='25%' class="text-left">Certificate </th>
-                                 <td  width='75%'>{{ row[2] }}</td>
-                    </tr>
-                    <tr>
+                                <td  width='75%'>{{ row[2] }}</td>
+                            </tr>
+                            <tr>
                                 <th width='25%' class="text-left">URL</th>
-                                 <td  width='75%'><a href="{{ row[5] }}" >Link</a></td>
-                    </tr>
-
-               </table>
-            </div>
-    <br>
-
-{% endfor %}
-
+                                <td  width='75%'><a href="{{ row[5] }}" >Link</a></td>
+                            </tr>
+                       </table>
+                    </div>
+                    <br>
+                {% endfor %}
             </div>
         </section>
     </main>
-
 </body>
-
 </html>

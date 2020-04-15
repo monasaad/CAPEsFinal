@@ -6,53 +6,57 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
-
-
-
         #textInput {
-    border: none;
-    border-bottom: 3px solid aqua;
-}
+            border: none;
+            border-bottom: 3px solid aqua;
+        }
 
-.userText {
-    color: white;
-    font-family: monospace;
-    font-size: 17px;
-    text-align: right;
-    line-height: 30px;
-}
-.userText span {
-    background-color: #009688;
-    padding: 10px;
-    border-radius: 2px;
-}
-.botText {
-    color: white;
-    font-family: monospace;
-    font-size: 17px;
-    text-align: left;
-    line-height: 30px;
-}
-.botText span {
-    background-color: #EF5350;
-    padding: 10px;
-    border-radius: 2px;
-}
+        .userText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: right;
+            line-height: 30px;
+        }
+
+        .userText span {
+            background-color: #009688;
+            padding: 10px;
+            border-radius: 2px;
+        }
+
+        .botText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: left;
+            line-height: 30px;
+        }
+
+        .botText span {
+            background-color: #EF5350;
+            padding: 10px;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
-    <h1 class="jumbotron text-center">Chatterbot in Python using Flask Framework</h1>
+<h1 class="jumbotron text-center">Chatterbot in Python using Flask Framework</h1>
 <div class="container">
     <div class="row">
         <div class="col-sm-6 offset-sm-3">
             <div id="chatbox" class="border border-success">
                 <p class="botText"><span>Hello there I'm CAPEs! </span></p>
-                <p class="botText"><span> I'm an artificial advisory I can recommend for you professional exams and certificates.</span></p>
+                <p class="botText"><span> I'm an artificial advisory I can recommend for you professional exams and certificates.</span>
+                </p>
                 <p class="botText"><span> To help you in that I need information for you are your ready? </span></p>
                 <p class="botText"><span>  If you ever want to exist and save your progress please click q</span></p>
 
- </span></p>
+                </span></p>
             </div>
             <div id="userInput">
                 <input id="textInput" class="form-control" type="text" name="msg" placeholder="Type Your Message Here">
@@ -61,40 +65,42 @@
         </div>
     </div>
 
-<script>
-    function getResponse() {
-        let userText = $("#textInput").val();
-        let userHtml = '<p class="userText"><span>' + userText + '</span></p>';
+    <script>
+        function getResponse() {
+            let userText = $("#textInput").val();
+            let userHtml = '<p class="userText"><span>' + userText + '</span></p>';
 
 
+            $("#textInput").val("");
 
-        $("#textInput").val("");
+            document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
 
-        document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+            //CHAT BOT SIDE
+            $("#chatbox").append(userHtml);
 
-         //CHAT BOT SIDE
-        $("#chatbox").append(userHtml);
+            $.post("/get", {msg: userText}).done(
+                function (data) {
 
-        $.post("/get", { msg: userText }).done(
-            function(data) {
+                    var botHtml = '<p class="botText"><span>' + data + '</span></p>';
 
-        var botHtml = '<p class="botText"><span>' + data + '</span></p>';
+                    $("#chatbox").append(botHtml);
 
-        $("#chatbox").append(botHtml);
-
-        document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
-        });
+                    document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+                });
         }
 
-    //if enter key is pressed
-    $("#textInput").keypress(function(e) { if(e.which == 13) { getResponse(); }     });
-    //if button clicked
-    $("#buttonInput").click(function() { getResponse();  });
+        //if enter key is pressed
+        $("#textInput").keypress(function (e) {
+            if (e.which == 13) {
+                getResponse();
+            }
+        });
+        //if button clicked
+        $("#buttonInput").click(function () {
+            getResponse();
+        });
 
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </div>
 </body>
 </html>

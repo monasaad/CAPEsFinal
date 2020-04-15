@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Add PE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Add PE</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archivo+Black">
@@ -12,87 +12,80 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
 </head>
-
 <body>
-    <!-- HEADER -->
-    <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
-        <div class="container"><a class="navbar-brand logo" href="#" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div
-                class="collapse navbar-collapse" id="navbarNav">
-                <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="../home.html">Home</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#">Add</a></li>
-                                            {% if session['logged_in'] == True %}
-                              <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">logout
-                         {% else %}
-                             <li class="nav-item" role="presentation"><a class="nav-link" href="/">login
-                         {% endif %}
-                    </a></li>
-                </ul>
+<!-- HEADER -->
+<nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
+    <div class="container">
+        <a class="navbar-brand logo" href="#" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="../home.html">Home</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="#">Add</a></li>
+                {% if session['logged_in'] == True %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">logout
+                        {% else %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/">login
+                {% endif %}
+                </a></li>
+            </ul>
         </div>
-        </div>
-    </nav>
-
-    <main class="page hire-me-page">
-        <section class="portfolio-block hire-me">
-            <div class="container">
-               <h2 style="text-align: center;">Add photo</h2>
-               <br>
-                <form class="text-left"  method='POST' enctype="multipart/form-data">
-
-
-
-                    	<div class="form-group">
-                        <label for="email">username</label>
-                        <input class="form-control" type="text" id="username" placeholder="username" name="username">
-                    </div>
-                    	<div class="form-group">
-                        <label for="email">password</label>
-                        <input class="form-control" type="text" id="password" placeholder="password" name="password">
-                    </div>
-                    	<div class="form-group">
-                        <label for="email">descption</label>
-                        <input class="form-control" type="text" id="descption" placeholder="descption" name="descption">
-                    </div>
-<div class="form-group">
-                        <label for="email">email</label>
-                        <input class="form-control" type="text" id="emal" placeholder="email" name="email">
-                    </div>
-
-
-                    <div class="form-group">
-                     <input type="file" class="form-control" id="img" name="img" accept="image/*">
-                    </div>
-
+    </div>
+</nav>
+<!-- INSIDE -->
+<main class="page hire-me-page">
+    <section class="portfolio-block hire-me">
+        <div class="container">
+            <h2 style="text-align: center;">Add photo</h2>
+            <br>
+            <form class="text-left" method='POST' enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="email">username</label>
+                    <input class="form-control" type="text" id="username" placeholder="username" name="username">
+                </div>
+                <div class="form-group">
+                    <label for="email">password</label>
+                    <input class="form-control" type="text" id="password" placeholder="password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="email">descption</label>
+                    <input class="form-control" type="text" id="descption" placeholder="descption" name="descption">
+                </div>
+                <div class="form-group">
+                    <label for="email">email</label>
+                    <input class="form-control" type="text" id="emal" placeholder="email" name="email">
+                </div>
+                <div class="form-group">
+                    <input type="file" class="form-control" id="img" name="img" accept="image/*">
+                </div>
                 <div class="form-group">
                     <div class="form-row">
                         <div class="col-md-6 button">
                         </div>
                         <div class="col-md-6 button">
                             {{ error }}
-
                             <button class="btn btn-primary btn-block" type="submit">Add</button>
                         </div>
                     </div>
                 </div>
             </form>
-            </div>
-        </section>
-    </main>
-    <footer class="page-footer">
-        <div class="container">
-            <div class="links">
-                <p>Conversational Agent Proficinal Exams Advisory &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2020</p>
-            </div>
         </div>
-    </footer>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
-    <script src="assets/js/script.min.js"></script>
+    </section>
+</main>
+<!-- FOOTER -->
+<footer class="page-footer">
+    <div class="container">
+        <div class="links">
+            <p>Conversational Agent Proficinal Exams Advisory &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2020</p>
+        </div>
+    </div>
+</footer>
 </body>
-
 </html>

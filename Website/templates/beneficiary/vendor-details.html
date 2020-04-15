@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Vendor Details</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Vendor Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
@@ -15,18 +15,14 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -36,11 +32,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='/assets/js/jquery.min.js') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/assets/bootstrap/js/bootstrap.min.js') }}">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
-
 </head>
 <body>
 <!-- HEADER -->
@@ -138,7 +132,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th width='25%' class="text-left">Suits for Student in level</th>
+                            <th width='25%' class="text-left">Level</th>
 
                             <td width='75%'>{{ row[4] }}</td>
                         </tr>
@@ -149,7 +143,7 @@
                         </tr>
                         {% if  (row[6]).lower() != ('null').lower() %}
                             <tr>
-                                <th width='25%' class="text-left">Prerequisite</th>
+                                <th width='25%' class="text-left">Pre-requisite</th>
 
                                 <td width='75%'>{{ (row[6]).capitalize() }}</td>
                             </tr>
@@ -168,7 +162,7 @@
                             </tr>
                         {% endif %}
                         <tr>
-                            <th width='25%' class="text-left">Duration of preparing for the exam</th>
+                            <th width='25%' class="text-left">Duration of the exam</th>
                             <td width='75%'>{{ (row[9]).capitalize() }}</td>
                         </tr>
                         <tr>

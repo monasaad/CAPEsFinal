@@ -1,136 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Update PE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Update PE</title>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
-</head>
-
-<body>
-    <!-- HEADER -->
-    <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
-        <div class="container"><a class="navbar-brand logo" href="#" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div
-                class="collapse navbar-collapse" id="navbarNav">
-                <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="/home">Home</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link " href="/add">Add new professional exam</a></li>
-                                            {% if session['logged_in'] == True %}
-                              <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout
-                         {% else %}
-                             <li class="nav-item" role="presentation"><a class="nav-link" href="/">Login
-                         {% endif %}
-                    </a></li>
-                </ul>
-        </div>
-        </div>
-    </nav>
-
-    <main class="page hire-me-page">
-        <section class="portfolio-block hire-me">
-            <div class="container">
-               <h2 style="text-align: center;" class="font-weight-bold ">Update professional exam's information</h2>
-               <br>
-                  {% for row in info  %}
-                <form class="text-left"   method='POST' enctype="multipart/form-data">
-
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Professional exam title</label>
-                        <input class="form-control" type="text" id="title" value="{{ row[1] }} "  name='title' required>
-                    </div>
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Major</label>
-                        <input class="form-control" type="text" id="Major" value="{{ row[3] }} "   name="major" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold " >Suits for Student in level</label>
-                        <input class="form-control" type="text" id="level" value="{{ row[4] }} "  name="level" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Field</label>
-                        <input class="form-control" type="text" id="field" value="{{ row[5] }} "  name="field" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold " >Prerequisite</label>
-                        <input class="form-control" type="text" id="pre_req" value="{{ row[6] }} "  name="pre_req" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Pre-certificate</label>
-                        <input class="form-control" type="text" id="pre_c" value="{{ row[7] }} "   name="pre_c" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Programing language</label>
-                        <input class="form-control" type="text" id="prog_l" value="{{ row[8] }} "  name="prog_l" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Duration of preparing for the exam</label>
-                        <input class="form-control" type="text" id="duration" value="{{ row[9] }} "  name="duration" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-bold ">Certificate title title</label>
-                        <input class="form-control" type="text" id="exam" value="{{ row[10] }} "  name="exam"required>
-                    </div>
-                   		<div class="form-group">
-                        <label class="font-weight-bold ">Description</label>
-                        <input class="form-control" type="text" id="description" value="{{ row[11] }} "  name="description" required>
-                    </div>
-
-                   			<div class="form-group">
-                        <label class="font-weight-bold ">URL link</label>
-                        <input class="form-control" type="text" id="URLlink" value="{{ row[12] }} "  name="URLlink" required>
-                    </div>
-
-<br>
-<br>
-<div class="container">
-  <div class="row">
-    <div class="col-12 col-md-6">
-
-          <button class="btn btn-primary font-weight-bold btn-block" type="submit">Update</button>
-
-    </div>
-    <div class="col-12 col-md-6">
-
-        <a class="btn font-weight-bold  btn-block" href="/home" style= "background-color:#DCDCDC; color:#FFFFFF ">Cancel</a>
-
-    </div>
-  </div>
-</div>
-
-
-            </form>
-                {% endfor %}
-            </div>
-        </section>
-    </main>
-
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
-    <script src="assets/js/script.min.js"></script>
-</body>
+</head>
+<body>
+<!-- HEADER -->
+<nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
+    <div class="container">
+        <a class="navbar-brand logo" href="/home" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/home">Home</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link " href="/add">Add PE</a>
+                </li>
+                {% if session['logged_in'] == True %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout
+                        {% else %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/">Login
+                {% endif %}
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
+<!-- INSIDE -->
+<main class="page hire-me-page">
+    <section class="portfolio-block hire-me">
+        <div class="container">
+            <h2 style="text-align: center;" class="font-weight-bold ">Update Professional Exam</h2>
+            <br>
+            {% for row in info %}
+                <form class="text-left" method='POST' enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Title</label>
+                        <input class="form-control" type="text" id="title" value="{{ row[1] }} " name='title' required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Major</label>
+                        <input class="form-control" type="text" id="Major" value="{{ row[3] }} " name="major" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Level</label>
+                        <input class="form-control" type="text" id="level" value="{{ row[4] }} " name="level" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Field</label>
+                        <input class="form-control" type="text" id="field" value="{{ row[5] }} " name="field" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Pre-requisite</label>
+                        <input class="form-control" type="text" id="pre_req" value="{{ row[6] }} " name="pre_req" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Pre-certificate</label>
+                        <input class="form-control" type="text" id="pre_c" value="{{ row[7] }} " name="pre_c" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Programing language</label>
+                        <input class="form-control" type="text" id="prog_l" value="{{ row[8] }} " name="prog_l" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Duration of the exam</label>
+                        <input class="form-control" type="text" id="duration" value="{{ row[9] }} " name="duration" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Certificate title</label>
+                        <input class="form-control" type="text" id="exam" value="{{ row[10] }} " name="exam" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Description</label>
+                        <input class="form-control" type="text" id="description" value="{{ row[11] }} " name="description" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">URL link</label>
+                        <input class="form-control" type="text" id="URLlink" value="{{ row[12] }} " name="URLlink" required>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <button class="btn btn-primary font-weight-bold btn-block" type="submit">Update</button>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a class="btn font-weight-bold  btn-block" href="/home"
+                                   style="background-color:#DCDCDC; color:#FFFFFF ">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+</body>
 </html>

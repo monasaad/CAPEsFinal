@@ -1,79 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
- <!--   <link  type="text/css" href="static/assets/css/style.min.css" rel="stylesheet">
-    <link type="text/css" href="/static/style.css" rel="stylesheet"> -->
-
-     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
-     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-
-
-  <!--Font -->
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+    <title>Login</title>
     <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="d-flex align-items-center min-vh-100" style="height: 630px;
+<div class="d-flex align-items-center min-vh-100" style="height: 630px;
            background-image: linear-gradient(120deg,#7f70f5,#0ea0ff);">
-    <div class="container" >
-      <div class="row" >
-        <div class="col">
-        </div>
-
-        <div class="col-5 shadow p-3 mb-5 bg-white rounded" >
-          <!-- Login Form -->
-          <h2 style="text-align:center; color: #775bf3">Login</h2>
-          <div id="loginForm">
-            <form  method="POST">
-
-              <div class="form-group" >
-                <label>Username</label>
-                <input type="username" id="username"  name="username" placeholder="Username"  value="{{request.form.username }}" class="form-control" required autofocus>
-              </div>
-
-              <div class="form-group">
-                <label> Password</label>
-                <input type="password" id="password" name="password" placeholder="Password" value="{{request.form.password }}" class="form-control" required>
-              </div>
-                 {% if error %}
-                    <p class="error"><strong>Error:</strong> {{ error }}
-                 {% endif %}
-              <button type="submit" class="btn btn-primary btn-block" id="loginbtn" value="login">Login</button>
-            </form>
+    <div class="container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-5 shadow p-3 mb-5 bg-white rounded">
+                <!-- Login Form -->
+                <h2 style="text-align:center; color: #775bf3">Login</h2>
+                <div id="loginForm">
+                    <form method="POST">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="username" id="username" name="username" placeholder="Username" value="{{ request.form.username }}" class="form-control" required autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label> Password</label>
+                            <input type="password" id="password" name="password" placeholder="Password" value="{{ request.form.password }}" class="form-control" required>
+                        </div>
+                        {% if error %}
+                            <p class="error"><strong>Error:</strong> {{ error }}
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary btn-block" id="loginbtn" value="login">Login
+                        </button>
+                    </form>
+                </div>
+                <br>
+                <a href="/forgot" class="form-check-label">Forgot password?</a>
             </div>
-
-            <br>
-              <a href="/forgot" class="form-check-label">Forgot password?</a>
-
-
-
+            <div class="col">
+            </div>
         </div>
-
-        <div class="col">
-        </div>
-
-      </div>
     </div>
-  </div>
+</div>
 
 <script>
-  function hideShow() {
-    var x = document.getElementById("forgetPasswordsForm");
-    var y = document.getElementById("loginForm");
+    function hideShow() {
+        var x = document.getElementById("forgetPasswordsForm");
+        var y = document.getElementById("loginForm");
 
-    if (x.style.display === "block") {
-      x.style.display = "none";
-      y.style.display = "block";
-    } else {
-      x.style.display = "block";
-      y.style.display = "none";
+        if (x.style.display === "block") {
+            x.style.display = "none";
+            y.style.display = "block";
+        } else {
+            x.style.display = "block";
+            y.style.display = "none";
+        }
     }
-  }
 </script>
 </body>
 </html>

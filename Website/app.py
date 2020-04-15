@@ -1,16 +1,16 @@
-from flask import Flask, render_template, redirect, url_for, request, session
-from werkzeug.utils import secure_filename
-import sqlite3
 import os
 import re
 import nltk
 import spacy
+import random
+import sqlite3
 import warnings
+import emoji as emoji
 from nltk import WordNetLemmatizer
 from difflib import SequenceMatcher
 from flask_mail import Mail, Message
-import random
-import emoji as emoji
+from werkzeug.utils import secure_filename
+from flask import Flask, render_template, redirect, url_for, request, session
 
 user = ""
 app = Flask(__name__)
@@ -23,7 +23,6 @@ UPLOAD_FOLDER = 'static/logos/'
 app.secret_key = 'CAPEs secret key CAPEs'
 app.config['SESSION_TYPE'] = 'null'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = '2020capes@gmail.com'
@@ -76,7 +75,6 @@ def ViewVendorDetails(v_username):
     return render_template('beneficiary/vendor-details.html', c=result, users=v_username, user=user, rows=rows)
 
 
-
 # Beneficiary  recommecndation page
 @app.route('/recommendation')
 def RecommendationPEs():
@@ -95,12 +93,12 @@ def RecommendationPEs():
 def Bhome():
     if session['logged_in'] == False:  return render_template('Login.html')
     user = session['username']
-    #conn = sqlite3.connect("CAPEsDatabase.db")
-    #cursor = conn.cursor()
-    #cursor.execute(" SELECT * FROM  vendor")
-    #result = cursor.fetchall()
+    # conn = sqlite3.connect("CAPEsDatabase.db")
+    # cursor = conn.cursor()
+    # cursor.execute(" SELECT * FROM  vendor")
+    # result = cursor.fetchall()
     # ,user=user
-    #return render_template('beneficiary/home.html', rows=result, i=0)
+    # return render_template('beneficiary/home.html', rows=result, i=0)
     return render_template('beneficiary/home.html')
 
 
@@ -178,7 +176,7 @@ def update(pe):
     return render_template("vendor/update.html")
 
 
-## delete vendor info page
+# delete vendor info page
 @app.route('/delete/<pe>', methods=['GET', 'POST'])
 def delete(pe):
     if session['logged_in'] == False: return render_template('Login.html')
@@ -417,11 +415,9 @@ def ForgotPassword():
         return render_template('forgetpassword.html', error=error)
 
 
-# _______________________________________________________________________________________
-
+# TODO: chat
 nlp = spacy.load("en_core_web_lg")
 warnings.simplefilter("error", UserWarning)
-
 connection = sqlite3.connect('CAPEsDatabase.db', check_same_thread=False)
 cursor = connection.cursor()
 
@@ -451,7 +447,7 @@ inpput = ''
 count_q7 = 1
 counter_q = 1
 rude_flag = False
-questionN = 'What is your major?'
+questionN = 'What is your major?' # TODO still needed?
 temp = ' '
 exit_flag = False
 reapet = False
@@ -464,6 +460,7 @@ wave_emoji = emoji.emojize(':wave:', use_aliases=True)
 smile_emoji = emoji.emojize(':smile:', use_aliases=True)
 thumbs_emoji = emoji.emojize(':thumbs_up:', use_aliases=True)
 grimacing_emoji = emoji.emojize(':grimacing:', use_aliases=True)
+
 
 def getinput(input):
     global inpput
@@ -484,29 +481,24 @@ def getQuestion():
     global question_result
     cursor.execute("SELECT question FROM questions")
     question_result = [i[0] for i in cursor.fetchall()]
-    # question_result.append('pre-certificate')
 
 
 def exitProgram(x, question):
     global res
     global exit_flag
     if x == 'q':
-        # TODO remove comment
-        # print("CAPES: Conversation ends. Your records are saved in logs. Bye!wave_emoji")
-        res = "Conversation ends.Bye!"+ wave_emoji + "</br> </br> If you want to try again reload this page <3"
+        res = "Conversation ends. Bye!" + wave_emoji + "</br> </br> If you want to try again reload this page <3"
         data_ca = (
             question, x, user, 'stopped',
-            "Conversation ends. Bye!"+ wave_emoji)
+            "Conversation ends. Bye!" + wave_emoji)
         uploadCA(data_ca)
         exit_flag = True
 
     elif x == 'f':
-        # TODO remove comment
-        # print("CAPES: Thank you for using CAPEs, Best wishes! smile_emoji")
-        res += " </br>Thank you for using CAPEs, Best wishes!"+ smile_emoji + \
-               "</br></br> please help us to improve CAPEs by fill this survey. " \
+        res += " </br>Thank you for using CAPEs, Best wishes!" + smile_emoji + \
+               "</br></br>Please, help us to improve CAPEs by completing this survey: " \
                "<a href=\"https://forms.gle/PCjbY7Znetn8xNQA9\">here</a>"
-        data_ca = (question, x, user, 'complete', "Thank you for using CAPEs, Best wishes!"+ smile_emoji)
+        data_ca = (question, x, user, 'complete', "Thank you for using CAPEs, Best wishes!" + smile_emoji)
         uploadCA(data_ca)
         exit_flag = True
 
@@ -593,29 +585,19 @@ def rudeKeyword(user_input, count):
     rude = list_matching
     for word in rude:
         if user_input.__contains__(word):
-            # res = rude_counter
-            # print(rude_counter)
             if rude_counter < 2:
                 temp = questionN
-                resp = 'This a warning for using rude word! <br /><br />'
-                # print(resp)
+                resp = 'This a warning for using a rude word!<br><br>'
                 reapet = True
                 res_rude = resp
-                # print('after:', rude_counter)
                 rude_counter += 1
-                # print(rude_counter)
                 data_ca = (question_result[count], user_input, session['username'], 'continue', resp)
                 uploadCA(data_ca)
-                # question()
             else:
-                # print('CAPEs: You were warned for using rude words two times the program will terminate now.')
-                # print('CAPES: conversation ends.')
                 rude_flag = True
                 res = 'You were warned for using rude words two times the program will terminate now.'
-                data_ca = (question_result[count], user_input, session['username'], 'stopped',
-                           'You were warned for using rude words two times the program will terminate now.')
+                data_ca = (question_result[count], user_input, session['username'], 'stopped', 'You were warned for using rude words two times the program will terminate now.')
                 uploadCA(data_ca)
-                # exit()
 
 
 def response(word_type, id_g, count, user_input):
@@ -626,18 +608,15 @@ def response(word_type, id_g, count, user_input):
     result = cursor.fetchall()
     if id_g == 2:
         if word_type.__contains__('result') | word_type.__contains__('record'):
-            # print('CAPEs:', result[0][0])
             res = result[0][0] + "<br /><br /> Now," + temp
             data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
             uploadCA(data_ca)
         else:
-            # print('CAPEs:', result[1][0])
             res = result[1][0] + "<br /><br /> Now, " + temp
             data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
             uploadCA(data_ca)
     else:
         resp = result[i_val][0]
-        # print('CAPEs:', resp)
         res = resp + "<br /><br /> Now, " + temp
         data_ca = (question_result[count], user_input, user, 'continue', str(resp))
         uploadCA(data_ca)
@@ -653,7 +632,6 @@ def checkGeneralKeyword(user_input, count):
         pattern_similarity = patternSimilarity(user_input)
         if pattern_similarity > 0.7:
             response(general, 2, count, user_input)
-            # question(count)
     else:
         generalKeyword(user_input, 3)
         weather = list_matching
@@ -661,16 +639,10 @@ def checkGeneralKeyword(user_input, count):
             pattern_similarity = patternSimilarity(user_input)
             if pattern_similarity > 0.7:
                 response(weather, 3, count, user_input)
-                # question(count)
         else:
-            # TODO remove comment
-            # print("CAPEs: Sorry, I did not understand you grimacing_emoji")
-            res = "Sorry, I did not understand you"+ grimacing_emoji+" <br /><br /> " + temp
-            data_ca = (question_result[count], user_input, user, 'continue',
-                       "Sorry, I did not understand you"+ grimacing_emoji +"and go next question")
+            res = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
+            data_ca = (question_result[count], user_input, user, 'continue', "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
             uploadCA(data_ca)
-
-            # question(count)
 
 
 def question():
@@ -679,7 +651,7 @@ def question():
     global inpput
     global counter_q
     global questionN
-    if counter > 5:
+    if counter > 5:  # TODO what will happen?
         """findCertificate()"""
         # exitProgram('f', '')
         # if we have time need to improve
@@ -704,7 +676,6 @@ def question():
                             for word in non_value:  # check none values
                                 if user_input.__contains__(word):
                                     keyword = "%"
-
                             data = (
                                 random_id, user_input, user_input_removed_keywords, keyword, pattern_similarity,
                                 questions_joint)
@@ -716,7 +687,6 @@ def question():
 
                             data_ca = (questions_joint, user_input, user, 'continue', responss)
                             uploadCA(data_ca)
-                            # print(counter)
                             if counter <= 4:
                                 questions_joint = ''.join(
                                     question_result[
@@ -745,7 +715,6 @@ def uploadLog(data):
 def print_result(accepted_list, result, w):
     global res, inpput
     if accepted_list.__len__() != 0:
-        # print("I found the most matching certificate for you:")
         res = "I found the most matching certificate for you: </br></br>"
         count = 1
         for row in result:
@@ -754,19 +723,17 @@ def print_result(accepted_list, result, w):
                 vendor = row[1]
                 exam = row[3]
                 link = row[4]
-
-                """res += str(
-                    count) + "- " + certificate + " provided from " + vendor + " it's own exam is " + exam + " you can see more in <a href=\"" + link + '\">here</a></br></br>'"""
                 res += str(count) + "- " + certificate + ".</br></br>"
                 data = (user, certificate, vendor, exam, link)
                 uploadResult(data)
                 count += 1
             else:
                 continue
-        res += ' If you want more information you can go to <b>Recommendation Tab</b></br>'
+        res += 'If you want more information you can go to <b>Recommendation</b>tab</br>'
     else:
         # print("Sorry, I can not found the most matching certificate for you")
-        res = 'Sorry, I can not found the most matching certificate for you'
+        res = 'Sorry, I could not found the most matching certificate for you'+grimacing_emoji
+        # TODO below still needed?
         certificate = 'no recommendation'
         vendor = 'no recommendation'
         exam = 'no recommendation'
@@ -804,7 +771,7 @@ def findCertificate():
 
     cursor.execute("SELECT  keywords FROM log WHERE qNumer=?", [w])
     result = cursor.fetchall()
-    #print(result)
+    # print(result)
     a = []
     for k in range(1):
         a.append([])
@@ -886,7 +853,6 @@ def findCertificate():
                 filed.append("%")
             else:
                 filed.append('%' + a[0][2][x] + '%')
-
         elif len_f <= 0:
             filed.append('')
         len_f -= 1
@@ -912,7 +878,6 @@ def findCertificate():
     len_v = len(a[0][4])
     for x in range(0, 3):
         if len_v > 0:
-
             if a[0][4][x] in "python":
                 vendor_name.append("%python institute%")
             elif a[0][4][x] in "red hat":
@@ -921,7 +886,6 @@ def findCertificate():
                 vendor_name.append("%")
             else:
                 vendor_name.append('%' + a[0][4][x] + '%')
-
         elif len_v <= 0:
             vendor_name.append('')
         len_v -= 1
@@ -971,7 +935,7 @@ def findCertificate():
 
     # print(qusion7)
     if qusion7.strip():
-        q7 = 'Do you had any certificates form this list? </br>' + qusion7 + ' please enter all <b>numbers</b> for certificates you have.'
+        q7 = 'Do you have any certificates from this list?</br>' + qusion7 + 'Please enter all <b>numbers</b> for certificates you have.'
     else:
         # todo please change it.
         q7 = 'Are you ready to see the result.'
@@ -990,13 +954,12 @@ def uploadCA(data):
     connection.commit()
 
 
-# ______________________________________________________________-
+# ______________________________________________________________
 
 @app.route('/get')
 def get_bot_response():
     global res
     global counter
-
     userText = request.args.get('msg')
     getinput(userText)
     getQuestion()
@@ -1011,7 +974,5 @@ def get_bot_response():
         # todo: 1- end program 2- reuse it
         # counter = 0
         res = 'If you want to try again reload this page <3'
-
     x = setinput()
-
     return str(x)

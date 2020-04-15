@@ -1,43 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Home</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Home</title>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/script.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
-
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/script.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
     <style>
         #chatbox {
             margin-left: auto;
@@ -51,8 +42,8 @@
         #userInput {
             width: 100%;
         }
+
         #textInput {
-            /*font-family: monospace;*/
             font-size: 17px;
             box-sizing: border-box;
             color: #000000;
@@ -64,39 +55,16 @@
             padding: 0 20px;
         }
 
-        .userText {
-            color: white;
-            /*font-family: monospace;*/
-            font-size: 17px;
-            text-align: right;
-            line-height: 30px;
-        }
-
         .userText span {
             background-color: #f8f63d;
             padding: 10px;
             border-radius: 2px;
         }
 
-        .botText {
-            color: white;
-            /*font-family: monospace;*/
-            font-size: 17px;
-            text-align: left;
-            line-height: 30px;
-        }
-
         .botText span {
             background-color: #ac36e1;
             padding: 10px;
             border-radius: 2px;
-        }
-
-        #tidbit {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 300px;
         }
 
         .boxed {
@@ -139,7 +107,6 @@
         }
 
         .messages {
-            /*margin-top: 30px;*/
             display: flex;
             flex-direction: column;
         }
@@ -186,15 +153,9 @@
             border-bottom-right-radius: 10px;
         }
 
-        .mine {
-            align-items: flex-end;
-        }
-
         .mine .message {
             color: white;
             margin-left: 25%;
-            /*background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
-            background-attachment: fixed;*/
             background-color: #75a7f2;
             position: relative;
         }
@@ -223,16 +184,44 @@
             background: white;
             border-bottom-left-radius: 10px;
         }
-    </style>
 
+        .mine {
+            align-items: flex-end;
+        }
+        /*
+        .userText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: right;
+            line-height: 30px;
+        }
+        .botText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: left;
+            line-height: 30px;
+        }
+        #tidbit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+        }*/
+    </style>
 </head>
+
 <body>
 <!-- HEADER -->
 <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
-    <div class="container"><a class="navbar-brand logo" href="#"
-                              style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a>
-        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only">Toggle navigation</span><span
-                class="navbar-toggler-icon"></span></button>
+    <div class="container">
+        <a class="navbar-brand logo" href="#"
+           style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item" role="presentation"><a class="nav-link active" href="/bhome">Home</a></li>
@@ -250,14 +239,16 @@
     </div>
 </nav>
 
+<!-- INSIDE -->
 <main class="page lanidng-page"></main>
 <div class="simple-slider">
     <div class="swiper-container">
         <div class="swiper-wrapper">
-          <div class="swiper-slide"
-                style="background-image:url(https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE2r0Th?ver=5b7d);"></div>
-        <div class="swiper-slide"><img class="swiper-slide" src="static/logos/Silde.png"></div>
-        <div class="swiper-slide"><img class="swiper-slide" src="static/logos/slider3.jpg"></div>
+            <div class="swiper-slide"
+                 style="background-image:url(https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE2r0Th?ver=5b7d);">
+            </div>
+            <div class="swiper-slide"><img class="swiper-slide" src="static/logos/Silde.png"></div>
+            <div class="swiper-slide"><img class="swiper-slide" src="static/logos/slider3.jpg"></div>
         </div>
         <div class="swiper-pagination"></div>
         <div class="swiper-button-prev"></div>
@@ -267,32 +258,24 @@
 </div>
 </div>
 
-<!-- TODO chat-->
+<!-- CHAT -->
 <section>
     <div class="boxed">
         <div class="top_menu">
             <div class="title">CAPEs Chat</div>
         </div>
-
         <div id="chatbox">
-            <!--
-            <p class="botText">
-                <span>Hi! I'm CAPEs! &#128522;</span>
-                <span><br><br>What is your major?<br></span>
-            </p>-->
             <div class="yours messages">
                 <div class="message last">
                     Hello there I'm CAPEs! &#128522;I'm an artificial advisory I can recommend for you professional
-                                                   exams and certificates.
-                                                   To help you in that I need information for you are your ready?
-                                                   If you ever want to exist and save your progress please click q.
+                    exams and certificates. To help you in that I need information for you are your ready?
+                    If you want to exist and save your progress please press the letter q.
                 </div>
                 <div class="message last">
                     What is your major?
                 </div>
             </div>
         </div>
-
         <div class="bottom_wrapper" style="padding-bottom: 50px;">
             <div id="userInput">
                 <input id="textInput" type="text" name="msg" placeholder="Write here..."/>
@@ -300,21 +283,21 @@
         </div>
     </div>
 </section>
-
 <br><br>
 </body>
+
 <script>
     function getBotResponse() {
-        var rawText = $("#textInput").val();
-        // var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
-        var userHtml = '<div class="mine messages last"><div class="message">' + rawText + "</div></div>";
-        $("#textInput").val("");
-        $("#chatbox").append(userHtml);
+        var rawText = $("#textInput").val(); // get the input
+        var userHtml = '<div class="mine messages last"><div class="message">' + rawText + "</div></div>"; // add the input into HTML tag
+        $("#textInput").val(""); // after getting the input, make the input empty
+        $("#chatbox").append(userHtml); // add the userHtml into the page
+
         document
-            .getElementById("userInput")
-            .scrollIntoView({block: "start", behavior: "smooth"});
+            .getElementById("userInput") // get user input
+            .scrollIntoView({block: "start", behavior: "smooth"}); // ?
+
         $.get("/get", {msg: rawText}).done(function (data) {
-            // var botHtml = '<p class="botText"><span>' + data + "</span></p>";
             var botHtml = '<div class="yours messages last"><div class="message">' + data + "</div></div>";
             $("#chatbox").append(botHtml);
             document
@@ -324,7 +307,7 @@
     }
 
     $("#textInput").keypress(function (e) {
-        if (e.which == 13) {
+        if (e.which == 13) { // 13 is enter
             getBotResponse();
         }
     });

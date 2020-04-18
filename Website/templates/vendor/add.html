@@ -63,11 +63,47 @@
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Major</label>
-                    <input class="form-control" type="text" id="Major" name="major" required>
+                <!--    <input class="form-control" type="text" id="Major" name="major" required>-->
+                      <select class="form-control" type="text" id="major" name="major" required >
+                           <option>Choose an option</option>
+                           <option value="cs">CS</option>
+                           <option value="cis">CIS</option>
+                           <option value="cys">CYS</option>
+                           <option value="ai">AI</option>
+
+                           <option value="cscis">CS, CIS</option>
+                           <option value="cscys">CS, CYS</option>
+                           <option value="csai">CS, AI</option>
+                           <option value="ciscys">CIS, CYS</option>
+                           <option value="cisai">CIS, AI</option>
+                           <option value="cysai">CYS, AI</option>
+
+                           <option value="csciscys">CS, CIS, CYS</option>
+                           <option value="cscisai">CS, CIS, AI</option>
+                           <option value="cscysai">CS, CYS, AI</option>
+                           <option value="ciscysai">CIS, CYS, AI</option>
+
+                           <option value="csciscysai">CS, CIS, CYS, AI</option>
+
+
+                       </select>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Level</label>
-                    <input class="form-control" type="text" id="level" name="level" required>
+                    <label class="font-weight-bold">Student's level</label>
+               <!--     <input class="form-control" type="text" id="level" name="level" required>-->
+                     <select class="form-control" type="text" id="level" name="level" required >
+                           <option>Choose an option</option>
+                           <option value="1">1</option>
+                           <option value="2">2</option>
+                           <option value="3">3</option>
+                           <option value="4">4</option>
+                           <option value="5">5</option>
+                           <option value="6">6</option>
+                           <option value="7">7</option>
+                           <option value="8">8</option>
+                           <option value="9">9</option>
+                           <option value="10">10</option>
+                       </select>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Field</label>
@@ -86,8 +122,16 @@
                     <input class="form-control" type="text" id="prog_l" name="prog_l" required>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold ">Duration of the exam</label>
-                    <input class="form-control" type="text" id="duration" name="duration" required>
+                    <label class="font-weight-bold ">Duration of exam preparation</label>
+              <!--      <input class="form-control" type="text" id="duration" name="duration" required>
+-->
+                       <select class="form-control" id="duration" name="duration" required >
+                           <option>Choose an option</option>
+                           <option value="long">Long term - up to year</option>
+                           <option value="short">Short term </option>
+                       </select>
+
+
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold ">Certificate title</label>

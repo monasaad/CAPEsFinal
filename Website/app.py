@@ -109,13 +109,13 @@ def add():
     if request.method == "POST":
         title = request.form['title']
         v_username = session['username']
-        major = request.form['major']
-        level = request.form['level']
+        major =request.form.get('major')
+        level = request.form.get('level')
         field = request.form['field']
         pre_req = request.form['pre_req']
         pre_c = request.form['pre_c']
         prog_l = request.form['prog_l']
-        duration = request.form['duration']
+        duration = request.form.get('duration')
         exam_name = request.form['exam']
         description = request.form['description']
         URLlink = request.form['URLlink']
@@ -144,13 +144,13 @@ def update(pe):
     if request.method == "POST":
         title = request.form['title']
         v_username = session['username']
-        major = request.form['major']
-        level = request.form['level']
+        major = request.form.get('major')
+        level = request.form.get('level')
         field = request.form['field']
         pre_req = request.form['pre_req']
         pre_c = request.form['pre_c']
         prog_l = request.form['prog_l']
-        duration = request.form['duration']
+        duration = request.form.get('duration')
         exam_name = request.form['exam']
         description = request.form['description']
         URLlink = request.form['URLlink']
@@ -342,10 +342,10 @@ def reset():
                         else:
                             con.commit()
                     else:
-                        error = "Password and Confirm Password fileds not matching"
+                        error = "Password and Confirm Password fields not matching"
                         return render_template('resetpassword.html', error=error)
                 else:
-                    error = "Please enter a right token"
+                    error = "Please enter a valid token"
                     return render_template('resetpassword.html', error=error)
     return render_template('resetpassword.html', error=error)
 

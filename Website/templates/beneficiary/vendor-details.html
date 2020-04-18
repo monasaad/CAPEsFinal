@@ -64,24 +64,18 @@
 </nav>
 
 <!-- INSIDE -->
+     {% for row in c %}
 <main class="page cv-page">
     <section class="portfolio-block cv">
         <div class="container">
             <div class="heading">
-                <h2 class="text-left">Vendor Details</h2>
+                <h2 class="text-left"> {{ row[0].title() }}</h2>
             </div>
-            {% for row in c %}
                 <div class="work-experience group">
-                    <div class="item">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h3>{{ row[0].title() }}</h3>
-                            </div>
-                        </div>
-                        <p class="text-muted">{{ row[2].capitalize() }}</p>
-                    </div>
+                        <p class="text-muted font-weight-normal text-justify">{{ row[2].capitalize() }}</p>
                 </div>
             {% endfor %}
+<br>
             <h2 class="text-left" class="font-weight-bold ">Professional Exams List</h2>
             <!--   <input type="text" class="form-control" id="Search" aria-describedby="Search" placeholder="Search"> -->
 
@@ -104,35 +98,28 @@
                         <tr>
                             <th width='25%' class="text-left">Major</th>
                             <td width='75%'>
-                                {% if row[3] == 'csciscys' %}
-                                    CS, CIS ,CYS
-                                {% elif row[3] == 'csciscysai' %}
-                                    CS, CIS ,CYS, AI
-                                {% elif row[3] == 'csai' %}
-                                    CS, AI
-                                {% elif row[3] == 'cscys' %}
-                                    CS ,CYS
-                                {% elif row[3] == 'cscis' %}
-                                    CS, CIS
-                                {% elif row[3] == 'ciscys' %}
-                                    CIS ,CYS
-                                {% elif row[3] == 'ai' %}
-                                    AI
-                                {% elif row[3] == 'cys' %}
-                                    CYS
-                                {% elif row[3] == 'cs' %}
-                                    CS
-                                {% elif row[3] == 'cis' %}
-                                    CIS
-                                {% elif row[3] == 'ciscys' %}
-                                    CS CYS AI
-                                {% elif row[3] == 'cscysai' %}
-                                    CS CYS AI
+                                        {% if row[3] == 'ai' %}          AI
+                                {% elif row[3] == 'cys' %}       CYS
+                                {% elif row[3] == 'cs' %}        CS
+                                {% elif row[3] == 'cis' %}       CIS
+
+                                {% elif row[3] == 'csai' %}      CS, AI
+                                {% elif row[3] == 'cscys' %}     CS ,CYS
+                                {% elif row[3] == 'cscis' %}     CS, CIS
+                                {% elif row[3] == 'ciscys' %}    CIS ,CYS
+                                {% elif row[3] == 'cisai' %}     CIS, AI
+                                {% elif row[3] == 'cysai' %}     CYS, AI
+
+                                {% elif row[3] == 'cscysai' %}   CS, CYS, AI
+                                {% elif row[3] == 'cscisai' %}   CS, CIS, AI
+                                {% elif row[3] == 'csciscys' %}  CS, CIS ,CYS
+                                {% elif row[3] == 'ciscysai' %}  CIS, CYS, AI
+                                {% elif row[3] == 'csciscysai'%} CS, CIS ,CYS, AI
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th width='25%' class="text-left">Level</th>
+                            <th width='25%' class="text-left">Suits for Level</th>
 
                             <td width='75%'>{{ row[4] }}</td>
                         </tr>
@@ -167,7 +154,7 @@
                         </tr>
                         <tr>
                             <th width='25%' class="text-left">Description</th>
-                            <td width='75%' class="text-left">{{ (row[10]).capitalize() }}</td>
+                            <td width='75%' class="text-left"><p class="text-justify">{{ (row[10]).capitalize() }}</p></td>
                         </tr>
                     </table>
                 </div>

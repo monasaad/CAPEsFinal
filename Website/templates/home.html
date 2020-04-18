@@ -79,35 +79,28 @@
                         <tr>
                             <th width='25%' class="text-left">Major</th>
                             <td width='75%'>
-                                {% if row[3] == 'csciscys' %}
-                                    CS, CIS ,CYS
-                                {% elif row[3] == 'csciscysai' %}
-                                    CS, CIS ,CYS, AI
-                                {% elif row[3] == 'csai' %}
-                                    CS, AI
-                                {% elif row[3] == 'cscys' %}
-                                    CS ,CYS
-                                {% elif row[3] == 'cscis' %}
-                                    CS, CIS
-                                {% elif row[3] == 'ciscys' %}
-                                    CIS ,CYS
-                                {% elif row[3] == 'ai' %}
-                                    AI
-                                {% elif row[3] == 'cys' %}
-                                    CYS
-                                {% elif row[3] == 'cs' %}
-                                    CS
-                                {% elif row[3] == 'cis' %}
-                                    CIS
-                                {% elif row[3] == 'ciscys' %}
-                                    CS CYS AI
-                                {% elif row[3] == 'cscysai' %}
-                                    CS CYS AI
+                                {% if row[3] == 'ai' %}          AI
+                                {% elif row[3] == 'cys' %}       CYS
+                                {% elif row[3] == 'cs' %}        CS
+                                {% elif row[3] == 'cis' %}       CIS
+
+                                {% elif row[3] == 'csai' %}      CS, AI
+                                {% elif row[3] == 'cscys' %}     CS ,CYS
+                                {% elif row[3] == 'cscis' %}     CS, CIS
+                                {% elif row[3] == 'ciscys' %}    CIS ,CYS
+                                {% elif row[3] == 'cisai' %}     CIS, AI
+                                {% elif row[3] == 'cysai' %}     CYS, AI
+
+                                {% elif row[3] == 'cscysai' %}   CS, CYS, AI
+                                {% elif row[3] == 'cscisai' %}   CS, CIS, AI
+                                {% elif row[3] == 'csciscys' %}  CS, CIS ,CYS
+                                {% elif row[3] == 'ciscysai' %}  CIS, CYS, AI
+                                {% elif row[3] == 'csciscysai'%} CS, CIS ,CYS, AI
                                 {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <th width='25%' class="text-left">Level</th>
+                            <th width='25%' class="text-left">Suits for Level</th>
 
                             <td width='75%'>{{ row[4] }}</td>
                         </tr>
@@ -123,6 +116,7 @@
                                 <td width='75%'>{{ (row[6]).capitalize() }}</td>
                             </tr>
                         {% endif %}
+
                         {% if  (row[7]).lower() != ('null').lower() %}
                             <tr>
                                 <th width='25%' class="text-left">Pre-certificate</th>
@@ -130,6 +124,7 @@
                                 <td width='75%'>{{ (row[7]).capitalize() }}</td>
                             </tr>
                         {% endif %}
+
                         {% if  (row[8]).lower() != ('null').lower() %}
                             <tr>
                                 <th width='25%' class="text-left">Programing language</th>
@@ -137,25 +132,33 @@
                             </tr>
                         {% endif %}
                         <tr>
-                            <th width='25%' class="text-left">Duration of the exam</th>
-                            <td width='75%'>{{ (row[9]).capitalize() }}</td>
+                            <th width='25%' class="text-left">Duration of exam preparation</th>
+
+                              {% if row[9] =='long' %}
+                                  <td width='75%'>Long term - up to year</td>
+                              {% else %}<td width='75%'> Short term </td>
+                              {% endif %}
+
+
+
                         </tr>
                         <tr>
                             <th width='25%' class="text-left">Description</th>
-                            <td width='75%' class="text-left">{{ (row[10]).capitalize() }}</td>
+                            <td width='75%' class="text-left"><p class="text-justify">{{ (row[10]).capitalize() }}</p></td>
                         </tr>
                         <tr>
-                            <th width='25%' class="text-left">Professional exam's information needs update or delete?
+                            <th width='25%' class="text-left">
                             </th>
-                            <td width='100%'>
+                            <td width='75%'>
+                                <span  class="text-left font-weight-bold"> Professional exam's information needs update or delete?</span>
                                 <form id="edit" style="display: inline; -webkit-box-shadow: none;	-moz-box-shadow: none;	box-shadow: none;" method='POST' enctype="multipart/form-data">
                                     <input type="text" id="tit" style="display: none;  visibility: hidden;" value="{{ row[0] }}" name='tit'>
                                     <button class="btn" type="submit">
-                                        <i class='fa fa-edit fa-2x' style="color:#b1b1cc;"></i>
+                                        <i class='fa fa-edit fa-2x' style="color:#70707f;"></i>
                                     </button>
                                 </form>
                                 <button class="btn" id="delete" onclick='dele("{{ row[0] }}","{{ row[1] }} ")'>
-                                    <i class="fa fa-trash fa-2x" style="color:#b1b1cc; "></i>
+                                    <i class="fa fa-trash fa-2x" style="color:#70707f; "></i>
                                 </button>
                             </td>
                         </tr>

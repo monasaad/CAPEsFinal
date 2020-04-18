@@ -20,6 +20,9 @@
                 <!-- Login Form -->
                 <h2 style="text-align:center; color: #775bf3">Login</h2>
                 <div id="loginForm">
+                           {% if error %}
+                            <p class="error" style="color:darkred"><strong >Error:</strong> {{ error }}
+                        {% endif %}
                     <form method="POST">
                         <div class="form-group">
                             <label>Username</label>
@@ -29,9 +32,7 @@
                             <label> Password</label>
                             <input type="password" id="password" name="password" placeholder="Password" value="{{ request.form.password }}" class="form-control" required>
                         </div>
-                        {% if error %}
-                            <p class="error"><strong>Error:</strong> {{ error }}
-                        {% endif %}
+
                         <button type="submit" class="btn btn-primary btn-block" id="loginbtn" value="login">Login
                         </button>
                     </form>

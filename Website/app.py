@@ -89,16 +89,9 @@ def RecommendationPEs():
 # todo ?
 # beneficiary home page
 @app.route('/bhome')
-# @app.route('/', methods=["GET", "POST"])
 def Bhome():
     if session['logged_in'] == False:  return render_template('Login.html')
     user = session['username']
-    # conn = sqlite3.connect("CAPEsDatabase.db")
-    # cursor = conn.cursor()
-    # cursor.execute(" SELECT * FROM  vendor")
-    # result = cursor.fetchall()
-    # ,user=user
-    # return render_template('beneficiary/home.html', rows=result, i=0)
     return render_template('beneficiary/home.html')
 
 
@@ -280,8 +273,6 @@ def b_validate(username, password):
             print(dbPass)
             if ((dbUser == username) and (dbPass == password)):
                 session['username'] = dbUser
-                global user
-                user = session['username']
                 completion = True
     return completion
 
@@ -360,7 +351,7 @@ def E_validate(Email):
         rows = cur.fetchall()
         for row in rows:
             email = row[3]
-            if email == Email:
+            if email.lower() == Email.lower():
                 completion = True
                 con.commit()
                 session['table'] = 'vendor'
@@ -371,7 +362,7 @@ def E_validate(Email):
                     rows = cur.fetchall()
                     for row in rows:
                         email = row[3]
-                        if email == Email:
+                        if email.lower() == Email.lower():
                             completion = True
                             con.commit()
                             session['table'] = 'beneficiary'
@@ -415,8 +406,11 @@ def ForgotPassword():
         return render_template('forgetpassword.html', error=error)
 
 
+
+# ________________________
+
 # TODO: chat
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_md")
 warnings.simplefilter("error", UserWarning)
 connection = sqlite3.connect('CAPEsDatabase.db', check_same_thread=False)
 cursor = connection.cursor()
@@ -432,30 +426,7 @@ def randomID():
         return randomID()
 
 
-exam = []
-link = []
-vendor = []
-certificate = []
-list_matching = []
-question_result = []
-training_pattern = []
-training_keyword = []
-counter = 0
-rude_counter = 0
-res = ''
-inpput = ''
-count_q7 = 1
-counter_q = 1
-rude_flag = False
-questionN = 'What is your major?' # TODO still needed?
-temp = ' '
-exit_flag = False
-reapet = False
-res_rude = ' '
-accepted_c = []
-q_count = 0
-result_preC = []
-uniq = []
+# todo remove comment
 wave_emoji = emoji.emojize(':wave:', use_aliases=True)
 smile_emoji = emoji.emojize(':smile:', use_aliases=True)
 thumbs_emoji = emoji.emojize(':thumbs_up:', use_aliases=True)
@@ -463,12 +434,13 @@ grimacing_emoji = emoji.emojize(':grimacing:', use_aliases=True)
 
 
 def getinput(input):
-    global inpput
-    inpput = input
+    session['inpput'] = input.lower()
 
 
 def setinput():
-    global res
+    res = session['res']
+    # todo print
+    print('res from set input', res)
     return res
 
 
@@ -478,63 +450,86 @@ random_id = randomID()
 
 
 def getQuestion():
-    global question_result
+    # question_result = session['question_result']
     cursor.execute("SELECT question FROM questions")
-    question_result = [i[0] for i in cursor.fetchall()]
+    session['question_result'] = [i[0] for i in cursor.fetchall()]
+    # todo print
+    print('question_result', session['question_result'])
 
 
-def exitProgram(x, question):
-    global res
-    global exit_flag
+# todo didnot check
+def exitProgram(x, quz):
+    res = session['res']
+    exit_flag = session['exit_flag']
     if x == 'q':
-        res = "Conversation ends. Bye!" + wave_emoji + "</br> </br> If you want to try again reload this page <3"
+        session['res'] = "Conversation ends. Bye!" + wave_emoji + "</br> </br> If you want to try again reload this page <3"
         data_ca = (
-            question, x, user, 'stopped',
+            quz, x, user, 'stopped',
             "Conversation ends. Bye!" + wave_emoji)
         uploadCA(data_ca)
-        exit_flag = True
+        session['exit_flag'] = True
 
     elif x == 'f':
-        res += " </br>Thank you for using CAPEs, Best wishes!" + smile_emoji + \
+        session['res'] += " </br>Thank you for using CAPEs, Best wishes!" + smile_emoji + \
                "</br></br>Please, help us to improve CAPEs by completing this survey: " \
                "<a href=\"https://forms.gle/PCjbY7Znetn8xNQA9\">here</a>"
-        data_ca = (question, x, user, 'complete', "Thank you for using CAPEs, Best wishes!" + smile_emoji)
+        data_ca = (quz, x, user, 'complete', "Thank you for using CAPEs, Best wishes!" + smile_emoji)
         uploadCA(data_ca)
-        exit_flag = True
+        session['exit_flag'] = True
 
 
 def getPattern(query):
+    training_pattern = session['training_pattern']
+    training_pattern.clear()
+    print('qury', query)
     cursor.execute("SELECT anwser_p FROM pattern Where id_r = ?", [query])
     patterns = cursor.fetchall()
     for row in patterns:
         training_pattern.append(row[0])
+    # todo print
+    print('training_pattern Lok', training_pattern)
     return training_pattern
 
 
+# todo didnot check
 def removeKeyword(user_input):
+    list_matching = session['list_matching']
+    # todo print
+    print('lis match', list_matching)
     keys = ' '.join(list_matching).split()
     removed_keyword = ' '.join(word for word in user_input.split() if word not in keys)
     return removed_keyword
 
 
 def getKeyword(user_input, query):
-    global list_matching
+    list_matching = session['list_matching']
     list_matching.clear()
+    training_keyword = session['training_keyword']
+    training_keyword.clear()
     cursor.execute("SELECT keyword FROM keyword Where id_r = ?", [query])
     keyword = cursor.fetchall()
+    # todo print
+    print('usr input', user_input)
+    print('keyword', keyword)
     for row in keyword:
         training_keyword.append(row[0])
         match = SequenceMatcher(None, user_input, row[0]).find_longest_match(0, len(user_input), 0, len(row[0]))
         list_matching.append(row[0][match.b: match.b + match.size])
         list_matching = list(set(list_matching).intersection(set(training_keyword)))
+        session['list_matching'] = list(set(list_matching).intersection(set(training_keyword)))
+    # todo print
+    print("keyword_tri", training_keyword)
+    print('list_matching', list_matching)
 
 
+# todo didnot check
 def removeSpecialCharacters(user_input):
     patterns = r'[^a-zA-z0-9 #+\s]'
     user_input_removed_char = re.sub(patterns, '', user_input)
     return user_input_removed_char
 
 
+# todo didnot check
 def lemmatize(user_input):
     lemmatizer = WordNetLemmatizer()
     user_input_lemmatized = ' '.join(lemmatizer.lemmatize(w) for w in nltk.word_tokenize(user_input))
@@ -542,21 +537,32 @@ def lemmatize(user_input):
 
 
 def generalKeyword(user_input, query):
-    training_keyword.clear()
-    global list_matching
+    list_matching = session['list_matching']
     list_matching.clear()
+    training_keyword = session['training_keyword']
+    training_keyword.clear()
     cursor.execute("SELECT keyword FROM keyword Where id_c = ?", [query])
     result = cursor.fetchall()
+    #todo print
+    print('_____genKey___',result)
     for row in result:
         training_keyword.append(row[0])
         match = SequenceMatcher(None, user_input, row[0]).find_longest_match(0, len(user_input), 0, len(row[0]))
         list_matching.append(row[0][match.b: match.b + match.size])
         list_matching = list(set(list_matching).intersection(set(training_keyword)))
+        session['list_matching'] = list(set(list_matching).intersection(set(training_keyword)))
+    #todo print
+    print('lost in gkey', session['list_matching'])
 
 
 def patternSimilarity(user_input):
+    training_pattern = session['training_pattern']
+    # todo print
+    print('form sim_pattern training_pattern', training_pattern)
     user = removeKeyword(user_input)
     user_cleaned = removeSpecialCharacters(user)
+    # todo print
+    print('user_cleaned', user_cleaned)
     similarity_list = []
     if len(user_cleaned) > 0:
         user_input_cleaned = lemmatize(user_cleaned)
@@ -574,107 +580,160 @@ def patternSimilarity(user_input):
 
 
 def rudeKeyword(user_input, count):
-    global rude_counter
-    global res
-    global rude_flag
-    global temp
-    global reapet
-    global res_rude
-    reapet = False
+    rude_counter = session['rude_counter']
+    res = session['res']
+    rude_flag = session['rude_flag']
+    temp = session['temp']
+    reapet = session['reapet']
+    res_rude = session['res_rude']
+    questionN = session['questionN']
+    list_matching = session['list_matching']
+    question_result = session['question_result']
+    session['list_matching'] = [ ]
+    session['reapet'] = False
+    #todo print
+    print('---------------rude-----------------------')
+    print('rude count', session['rude_counter'])
+    print('questionN', questionN)
+    print('listM', session['list_matching'])
+
     generalKeyword(user_input, 4)
-    rude = list_matching
-    for word in rude:
-        if user_input.__contains__(word):
-            if rude_counter < 2:
+    rude = session['list_matching']
+    #todo print
+    print('listM after', session['list_matching'])
+    for word in session['list_matching']:
+        if user_input._contains_(word):
+            #todo print
+            print('enter thier is rude')
+            if session['rude_counter'] < 2:
                 temp = questionN
                 resp = 'This a warning for using a rude word!<br><br>'
-                reapet = True
-                res_rude = resp
-                rude_counter += 1
+                session['reapet'] = True
+                session['res_rude'] = resp
+                session['rude_counter'] += 1
                 data_ca = (question_result[count], user_input, session['username'], 'continue', resp)
                 uploadCA(data_ca)
             else:
-                rude_flag = True
-                res = 'You were warned for using rude words two times the program will terminate now.'
-                data_ca = (question_result[count], user_input, session['username'], 'stopped', 'You were warned for using rude words two times the program will terminate now.')
+                session['rude_flag'] = True
+                session['res'] = 'You were warned for using rude words two times the program will terminate now.'
+                data_ca = (question_result[count], user_input, session['username'], 'stopped',
+                           'You were warned for using rude words two times the program will terminate now.')
                 uploadCA(data_ca)
 
 
 def response(word_type, id_g, count, user_input):
-    global res
-    temp = questionN
+    res = session['res']
+    question_result = session['question_result']
+    temp = session['temp']
+    questionN = session['questionN']
+    temp = session['questionN']
     i_val = random.choice([0, 1])
     cursor.execute("SELECT ans2 FROM response Where id_c = ?", [id_g])
     result = cursor.fetchall()
     if id_g == 2:
-        if word_type.__contains__('result') | word_type.__contains__('record'):
-            res = result[0][0] + "<br /><br /> Now," + temp
+        if word_type._contains('result') | word_type.contains_('record'):
+            session['res'] = result[0][0] + "<br /><br /> Now," + temp
             data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
             uploadCA(data_ca)
         else:
-            res = result[1][0] + "<br /><br /> Now, " + temp
+            session['res'] = result[1][0] + "<br /><br /> Now, " + temp
             data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
             uploadCA(data_ca)
     else:
         resp = result[i_val][0]
-        res = resp + "<br /><br /> Now, " + temp
+        session['res'] = resp + "<br /><br /> Now, " + temp
         data_ca = (question_result[count], user_input, user, 'continue', str(resp))
         uploadCA(data_ca)
 
 
 def checkGeneralKeyword(user_input, count):
-    global counter_q
-    global res
+    temp = session['temp']
+    counter_q = session['counter_q']
+    res = session['res']
+    list_matching = session['list_matching']
+    question_result = session['question_result']
+    questionN = session['questionN']
     temp = questionN
     generalKeyword(user_input, 2)
-    general = list_matching
+    general = session['list_matching']
+    print('list mtach vluae in gen:', session['list_matching'], len(session['list_matching']))
     if len(general) != 0:
+        #todo print
+        print('________________enter gen_______________')
+
         pattern_similarity = patternSimilarity(user_input)
         if pattern_similarity > 0.7:
             response(general, 2, count, user_input)
     else:
+        #todo print
+        print('________________enter weth_______________')
+
         generalKeyword(user_input, 3)
-        weather = list_matching
+        #todo print
+        print('wether',session['list_matching'])
+        weather = session['list_matching']
         if len(weather) != 0:
+            #todo print
+            print('________________enter weth2_______________')
             pattern_similarity = patternSimilarity(user_input)
-            if pattern_similarity > 0.7:
+            if pattern_similarity > 0.65:
                 response(weather, 3, count, user_input)
         else:
-            res = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
-            data_ca = (question_result[count], user_input, user, 'continue', "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
+            #todo print
+            print('________________enter soory_______________')
+
+            session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
+            data_ca = (question_result[count], user_input, user, 'continue',
+                       "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
             uploadCA(data_ca)
 
 
 def question():
-    global counter
-    global res
-    global inpput
-    global counter_q
-    global questionN
-    if counter > 5:  # TODO what will happen?
+    counter = session['counter']
+    res = session['res']
+    inpput = session['inpput']
+    counter_q = session['counter_q']
+    questionN = session['questionN']
+    exit_flag = session['exit_flag']
+    reapet = session['reapet']
+    res_rude = session['res_rude']
+    rude_flag = session['rude_flag']
+    list_matching = session['list_matching']
+    question_result = session['question_result']
+    # question_result = questionN
+    if counter > 5:  # TODO what will happen? ans: will delete
         """findCertificate()"""
         # exitProgram('f', '')
         # if we have time need to improve
     else:
-        questions_joint = questionN
+        questions_joint = session['questionN']
         user_input = inpput
+        # todo print
+        print('qus', questions_joint)
+        print('use input', user_input)
         user_input = removeSpecialCharacters(user_input)
         exitProgram(user_input, questions_joint)
-        if not exit_flag:
-            rudeKeyword(user_input, counter)  # rude word
-            if reapet:
-                res = res_rude + questions_joint
+        if not session['exit_flag']:
+            rudeKeyword(user_input, session['counter'])  # rude word
+            if session['reapet']:
+                session['res'] = session['res_rude'] + session['questionN']
             else:
-                if not rude_flag:
+                if not session['rude_flag']:
+                    # todo print
+                    print('count+1', counter + 1)
                     getPattern(counter + 1)
                     getKeyword(user_input, counter + 1)
-                    if len(list_matching) != 0:
+                    if len(session['list_matching']) != 0:
                         pattern_similarity = patternSimilarity(user_input)
+                        # todo print
+                        print("pattern_similarity", pattern_similarity)
                         if pattern_similarity > 0.7:
-                            keyword = ','.join(list_matching)
+                            # todo list mathc for key
+                            print('list mathc for key_________', session['list_matching'])
+                            keyword = ','.join(session['list_matching'])
                             user_input_removed_keywords = "".join(removeKeyword(user_input))
                             for word in non_value:  # check none values
-                                if user_input.__contains__(word):
+                                if user_input._contains_(word):
                                     keyword = "%"
                             data = (
                                 random_id, user_input, user_input_removed_keywords, keyword, pattern_similarity,
@@ -688,17 +747,21 @@ def question():
                             data_ca = (questions_joint, user_input, user, 'continue', responss)
                             uploadCA(data_ca)
                             if counter <= 4:
-                                questions_joint = ''.join(
-                                    question_result[
-                                        counter_q])  # loop over questions_joint table, and save the result in questions_joint
-                                questionN = questions_joint
-                                res = questions_joint
+                                questions_joint = ''.join(question_result[counter_q])  # loop over questions_joint table, and save the result in questions_joint
+                                # todo print
+                                session['questionN'] = questions_joint
+                                session['res'] = questions_joint
+                                # todo print
+                                print('questionN', questionN)
+                                print('res', session['res'])
                             elif counter == 5:
                                 # findCertificate()
-                                res = findCertificate()
-
-                            counter += 1
-                            counter_q += 1
+                                session['res'] = findCertificate()
+                            # todo print
+                            session['counter'] += 1
+                            print('counter', counter)
+                            session['counter_q'] += 1
+                            print('counterq', counter_q)
                         else:
                             checkGeneralKeyword(user_input, counter)
                     else:
@@ -713,9 +776,17 @@ def uploadLog(data):
 
 
 def print_result(accepted_list, result, w):
-    global res, inpput
-    if accepted_list.__len__() != 0:
-        res = "I found the most matching certificate for you: </br></br>"
+    res = session['res']
+    inpput = session['inpput']
+    certificate = session['certificate']
+    vendor = session['vendor']
+    exam = session['exam']
+    link = session['link']
+    #todo print
+    print('acented inlast', accepted_list)
+    print('result in last', result)
+    if accepted_list._len_() != 0:
+        session['res'] = "I found the most matching certificate for you: </br></br>"
         count = 1
         for row in result:
             if row[2] in accepted_list:
@@ -723,55 +794,59 @@ def print_result(accepted_list, result, w):
                 vendor = row[1]
                 exam = row[3]
                 link = row[4]
-                res += str(count) + "- " + certificate + ".</br></br>"
+                session['res'] += str(count) + "- " + certificate + ".</br></br>"
                 data = (user, certificate, vendor, exam, link)
                 uploadResult(data)
                 count += 1
             else:
                 continue
-        res += 'If you want more information you can go to <b>Recommendation</b>tab</br>'
+        session['res'] += 'If you want more information you can go to <b>Recommendation</b>tab</br>'
     else:
         # print("Sorry, I can not found the most matching certificate for you")
-        res = 'Sorry, I could not found the most matching certificate for you'+grimacing_emoji
-        # TODO below still needed?
-        certificate = 'no recommendation'
-        vendor = 'no recommendation'
-        exam = 'no recommendation'
-        link = 'no recommendation'
+        session['res'] = 'Sorry, I could not found the most matching certificate for you' + grimacing_emoji
     exitProgram('f', '')
 
 
-def q7_check_ans(uniq, result_preC):
-    global q_count
+def q7_check_ans(uniq):
+    q_count = session['q_count']
+    #todo print
+    print('q_count in q7' , q_count)
+    print('uniq in q7', uniq)
+    accepted_c = session['accepted_c']
+    inpput = session['inpput']
+    res = session['res']
     ans = inpput
     data_ca = (res, ans, user, 'continue', 'after those question the result will show')
     uploadCA(data_ca)
     while q_count >= 0:
-        if ans.__contains__(str(q_count)):
+        if ans._contains_(str(q_count)):
             try:
-                accepted_c.append(uniq[q_count])
+                session['accepted_c'].append(uniq[q_count])
             except IndexError:
                 pass
         else:
             'noting'
         q_count -= 1
-    """if q_count <= 0:
-        print_result(accepted_c, result_preC, random_id)"""
+        session['q_count'] -= 1
+    #todo print
+    print('accepted ones', session['accepted_c'])
 
 
 def findCertificate():
-    global certificate, vendor, exam, link
-    global res
-    global inpput
-    global q_count
-    global result_preC
-    global uniq
+    res = session['res']
+    inpput = session['inpput']
+    q_count = session['q_count']
+    result_preC = session['result_preC']
+    uniq = session['uniq']
+    accepted_c = session['accepted_c']
+    count_q7 = session['count_q7']
     w = random_id
     # w = 9502
 
     cursor.execute("SELECT  keywords FROM log WHERE qNumer=?", [w])
     result = cursor.fetchall()
-    # print(result)
+    # todo print
+    print('result',result)
     a = []
     for k in range(1):
         a.append([])
@@ -787,22 +862,22 @@ def findCertificate():
     len_m = len(a[0][0])
     for x in range(0, 3):
         if len_m > 0:
-            if a[0][0][x].__contains__('computer science'):
+            if a[0][0][x]._contains_('computer science'):
                 major.append('%cs%')
-            elif a[0][0][x].__contains__('computer information system'):
+            elif a[0][0][x]._contains_('computer information system'):
                 major.append('%cis%')
-            elif a[0][0][x].__contains__('cyber security'):
+            elif a[0][0][x]._contains_('cyber security'):
                 major.append('%cys%')
-            elif a[0][0][x].__contains__('artificial intelligent'):
+            elif a[0][0][x]._contains_('artificial intelligent'):
                 major.append('%ai%')
-            elif a[0][0][x].__contains__('%'):
+            elif a[0][0][x]._contains_('%'):
                 major.append('%')
             else:
                 major.append('%' + a[0][0][x] + '%')
         elif len_m <= 0:
             major.append('')
         len_m -= 1
-    # _____________________________________________________________________________
+    # ___________________________
     level = []
     len_l = len(a[0][1])
     max = 0
@@ -837,7 +912,7 @@ def findCertificate():
             max = asnum
         level.append(max)
         len_l -= 1
-    # ____________________________________________________________________________
+    # __________________________
     filed = []
     len_f = len(a[0][2])
     for x in range(0, 3):
@@ -856,7 +931,7 @@ def findCertificate():
         elif len_f <= 0:
             filed.append('')
         len_f -= 1
-    # _______________________________________________________________________________
+    # ___________________________
     program_language = []
     len_p = len(a[0][3])
     for x in range(0, 3):
@@ -873,7 +948,7 @@ def findCertificate():
         elif len_p <= 0:
             program_language.append('')
         len_p -= 1
-    # ____________________________________________________________________
+    # ________________________
     vendor_name = []
     len_v = len(a[0][4])
     for x in range(0, 3):
@@ -889,7 +964,7 @@ def findCertificate():
         elif len_v <= 0:
             vendor_name.append('')
         len_v -= 1
-    # ________________________________________________________________________
+    # ________________________
     duration = []
     len_d = len(a[0][5])
     for x in range(0, 3):
@@ -908,31 +983,36 @@ def findCertificate():
          program_language[0],
          program_language[1], program_language[2], vendor_name[0], vendor_name[1], vendor_name[2], duration[0],
          duration[1], duration[2]))
-    result_preC = cursor.fetchall()
+    session['result_preC'] = cursor.fetchall()
+    #todo print
+    print('result afterfilter', session['result_preC'])
     seen = set()
     uniq = []
     # print('result: ',result_preC)
     # to take the duplicate pre-certificate
-    for x in result_preC:
+    for x in session['result_preC']:
         if x[2] not in seen:
-            uniq.append(x[2])
+            session['uniq'].append(x[2])
             seen.add(x[2])
-    # to take the accept certificate
-    # accepted_c = []
 
-    count_q7 = uniq.__len__()
+    session['count_q7'] = session['uniq']._len_()
+    # todo print
+    print('uniq', session['uniq'])
+    print('uniq num', session['count_q7'])
+    print('q_count', session['q_count'])
     # print('uniq:',uniq)
     qusion7 = ' '
-    q_count = 0
-    for row in uniq:
+    for row in session['uniq']:
         if row != 'NULL':
             # q7 = "Have you taken this pre-certificate", row, "? (yes or no)"
-            qusion7 += str(q_count) + '-' + row + '</br>'
+            qusion7 += str(session['q_count']) + '-' + row + '</br>'
         if row == 'NULL':
-            accepted_c.append(row)
-        q_count += 1
-        count_q7 -= 1
-
+            session['accepted_c'].append(row)
+        session['q_count'] = session['q_count'] + 1
+        session['count_q7'] = session['count_q7'] - 1
+    #todo print
+    print('q_count after', session['q_count'])
+    print('count_7', session['count_q7'])
     # print(qusion7)
     if qusion7.strip():
         q7 = 'Do you have any certificates from this list?</br>' + qusion7 + 'Please enter all <b>numbers</b> for certificates you have.'
@@ -954,12 +1034,16 @@ def uploadCA(data):
     connection.commit()
 
 
-# ______________________________________________________________
+# ______________________
 
 @app.route('/get')
 def get_bot_response():
-    global res
-    global counter
+    res = session['res']
+    counter = session['counter']
+    uniq = session['uniq']
+    result_preC = session['result_preC']
+    accepted_c = session['accepted_c']
+
     userText = request.args.get('msg')
     getinput(userText)
     getQuestion()
@@ -967,12 +1051,12 @@ def get_bot_response():
     if counter < 6:
         question()
     elif counter == 6:
-        q7_check_ans(uniq, result_preC)
-        print_result(accepted_c, result_preC, random_id)
-        counter += 1
+        q7_check_ans(session['uniq'])
+        session['counter'] += 1
+        print_result(session['accepted_c'], session['result_preC'], random_id)
     elif counter > 6:
-        # todo: 1- end program 2- reuse it
-        # counter = 0
-        res = 'If you want to try again reload this page <3'
+        session['res'] = 'If you want to try again reload this page <3'
+
     x = setinput()
+
     return str(x)

@@ -13,9 +13,9 @@ from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, request, session
 
 user = ""
-app = Flask(__name__)
+app = Flask(_name_)
 mail = Mail(app)
-if __name__ == '_main_':
+if _name_ == '_main_':
     app.run()
 
 # configuration for mail, upload image ,app

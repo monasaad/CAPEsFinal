@@ -12,7 +12,7 @@ from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, request, session
 
-user = ""
+
 app = Flask(_name_)
 mail = Mail(app)
 if _name_ == '_main_':
@@ -102,7 +102,7 @@ def RecommendationPEs():
 def Bhome():
     # check if user logged in , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
-    user = session['username']
+    print(session['username'])
     session['counter'] = 0
     session['exam'] = []
     session['link'] = []
@@ -473,8 +473,7 @@ def exitProgram(x, quz):
     exit_flag = session['exit_flag']
     if x == 'q':
         session['res'] = "Conversation ends. Bye!" + wave_emoji + "</br> </br> If you want to try again reload this page <3"
-        data_ca = (
-            quz, x, user, 'stopped',
+        data_ca = (quz, x, session['username'], 'stopped',
             "Conversation ends. Bye!" + wave_emoji)
         uploadCA(data_ca)
         session['exit_flag'] = True
@@ -483,7 +482,7 @@ def exitProgram(x, quz):
         session['res'] += " </br>Thank you for using CAPEs, Best wishes!" + smile_emoji + \
                "</br></br>Please, help us to improve CAPEs by completing this survey: " \
                "<a href=\"https://forms.gle/PCjbY7Znetn8xNQA9\">here</a>"
-        data_ca = (quz, x, user, 'complete', "Thank you for using CAPEs, Best wishes!" + smile_emoji)
+        data_ca = (quz, x, session['username'], 'complete', "Thank you for using CAPEs, Best wishes!" + smile_emoji)
         uploadCA(data_ca)
         session['exit_flag'] = True
 
@@ -646,16 +645,16 @@ def response(word_type, id_g, count, user_input):
     if id_g == 2:
         if word_type._contains('result') | word_type.contains_('record'):
             session['res'] = result[0][0] + "<br /><br /> Now," + temp
-            data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
+            data_ca = (question_result[count], user_input, session['username'], 'continue', result[0][0])
             uploadCA(data_ca)
         else:
             session['res'] = result[1][0] + "<br /><br /> Now, " + temp
-            data_ca = (question_result[count], user_input, user, 'continue', result[0][0])
+            data_ca = (question_result[count], user_input, session['username'], 'continue', result[0][0])
             uploadCA(data_ca)
     else:
         resp = result[i_val][0]
         session['res'] = resp + "<br /><br /> Now, " + temp
-        data_ca = (question_result[count], user_input, user, 'continue', str(resp))
+        data_ca = (question_result[count], user_input, session['username'], 'continue', str(resp))
         uploadCA(data_ca)
 
 
@@ -697,14 +696,14 @@ def checkGeneralKeyword(user_input, count):
                     # todo print
                     print('_____enter soory______')
                     session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
-                    data_ca = (question_result[count], user_input, user, 'continue',
+                    data_ca = (question_result[count], user_input, session['username'], 'continue',
                                "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                     uploadCA(data_ca)
             else:
                 # todo print
                 print('_____enter soory______')
                 session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
-                data_ca = (question_result[count], user_input, user, 'continue',
+                data_ca = (question_result[count], user_input, session['username'], 'continue',
                            "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                 uploadCA(data_ca)
     else:
@@ -726,14 +725,14 @@ def checkGeneralKeyword(user_input, count):
                 # todo print
                 print('_____enter soory______')
                 session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
-                data_ca = (question_result[count], user_input, user, 'continue',
+                data_ca = (question_result[count], user_input, session['username'], 'continue',
                            "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                 uploadCA(data_ca)
         else:
             #todo print
             print('_____enter soory______')
             session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
-            data_ca = (question_result[count], user_input, user, 'continue',
+            data_ca = (question_result[count], user_input, session['username'], 'continue',
                        "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
             uploadCA(data_ca)
 
@@ -794,7 +793,7 @@ def question():
                             else:
                                 responss = question_result[counter + 1]
 
-                            data_ca = (questions_joint, user_input, user, 'continue', responss)
+                            data_ca = (questions_joint, user_input, session['username'], 'continue', responss)
                             uploadCA(data_ca)
                             if counter <= 4:
                                 questions_joint = ''.join(question_result[counter_q])  # loop over questions_joint table, and save the result in questions_joint
@@ -845,7 +844,7 @@ def print_result(accepted_list, result, w):
                 exam = row[3]
                 link = row[4]
                 session['res'] += str(count) + "- " + certificate + ".</br></br>"
-                data = (user, certificate, vendor, exam, link)
+                data = (session['username'], certificate, vendor, exam, link)
                 uploadResult(data)
                 count += 1
             else:
@@ -866,7 +865,7 @@ def q7_check_ans(uniq):
     inpput = session['inpput']
     res = session['res']
     ans = inpput
-    data_ca = (res, ans, user, 'continue', 'after those question the result will show')
+    data_ca = (res, ans, session['username'], 'continue', 'after those question the result will show')
     uploadCA(data_ca)
     while q_count >= 0:
         if ans._contains_(str(q_count)):

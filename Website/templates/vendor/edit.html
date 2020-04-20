@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update PE</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Archivo+Black">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+</head>
+<body>
+<!-- HEADER -->
+<nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
+    <div class="container">
+        <a class="navbar-brand logo" href="/home" style="font-family: 'Archivo Black', sans-serif;font-size: 24px;">CAPEs</a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/home">Home</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link " href="/add">Add PE</a>
+                </li>
+                {% if session['logged_in'] == True %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout
+                        {% else %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="/">Login
+                {% endif %}
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- INSIDE -->
+<main class="page hire-me-page">
+    <section class="portfolio-block hire-me">
+        <div class="container">
+            <h2 style="text-align: center;" class="font-weight-bold ">Update Professional Exam</h2>
+            <br>
+            {% for row in info %}
+                <form class="text-left" method='POST' enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Title</label>
+                        <input class="form-control" type="text" id="title" value="{{ row[1] }} " name='title' required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Major</label>
+                      <!--  <input class="form-control" type="text" id="Major" value="{row[3] } " name="major" required>-->
+
+                           <select class="form-control" type="text" id="major" name="major" required >
+                               {% if row[3] =='cs' %}           <option value="cs" selected >CS</option>              {% else %}   <option value="cs"  >CS</option>  {% endif %}
+                               {% if row[3] =='cis' %}          <option value="cis" selected>CIS</option>              {% else %}   <option value="cis">CIS</option> {% endif %}
+                               {% if row[3] =='cys' %}          <option value="cys" selected>CYS</option>              {% else %}   <option value="cys">CYS</option> {% endif %}
+                               {% if row[3] =='ai' %}           <option value="ai" selected>AI</option>                {% else %}   <option value="ai">AI</option> {% endif %}
+
+                               {% if row[3] =='cscis' %}        <option value="cscis" selected>CS, CIS</option>        {% else %}   <option value="cscis">CS, CIS</option> {% endif %}
+                               {% if row[3] =='cscys' %}        <option value="cscys" selected>CS, CYS</option>        {% else %}   <option value="cscys">CS, CYS</option> {% endif %}
+                               {% if row[3] =='csai' %}         <option value="csai" selected>CS, AI</option>          {% else %}   <option value="csai">CS, AI</option> {% endif %}
+                               {% if row[3] =='ciscys' %}       <option value="ciscys" selected>CIS, CYS</option>      {% else %}   <option value="ciscys">CIS, CYS</option> {% endif %}
+                               {% if row[3] =='cisai' %}        <option value="cisai" selected>CIS, AI</option>        {% else %}   <option value="cisai">CIS, AI</option> {% endif %}
+                               {% if row[3] =='cysai' %}        <option value="cysai" selected>CYS, AI</option>        {% else %}   <option value="cysai">CYS, AI</option> {% endif %}
+
+                               {% if row[3] =='csciscys' %}        <option value="csciscys" selected>CS, CIS, CYS</option>   {% else %}   <option value="csciscys">CS, CIS, CYS</option> {% endif %}
+                               {% if row[3] =='cscisai' %}        <option value="cscisai" selected>CS, CIS, AI</option>    {% else %}   <option value="cscisai">CS, CIS, AI</option> {% endif %}
+                               {% if row[3] =='cscysai' %}      <option value="cscysai" selected>CS, CYS, AI</option>  {% else %}   <option value="cscysai">CS, CYS, AI</option> {% endif %}
+                               {% if row[3] =='ciscysai' %}     <option value="ciscysai" selected>CIS, CYS, AI</option>{% else %}   <option value="ciscysai">CIS, CYS, AI</option> {% endif %}
+
+                               {% if row[3] =='csciscysai' %}   <option value="csciscysai" selected>CS, CIS, CYS, AI</option> {% else %}  <option value="csciscysai">CS, CIS, CYS, AI</option> {% endif %}
+
+
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Student's level</label>
+                      <!--  <input class="form-control" type="text" id="level" value="{ row[4] } " name="level" required>-->
+                        <select class="form-control" type="text" id="level" name="level" required >
+                      {% if row[4] == 1 %}  <option value="1" selected>1</option>    {% else %} <option value="1">1 </option>  {% endif %}
+                      {% if row[4] == 2 %}  <option value="2" selected> 2 </option>  {% else %} <option value="2">2 </option>  {% endif %}
+                      {% if row[4] == 3 %}  <option value="3" selected>3</option>    {% else %} <option value="3">3 </option>  {% endif %}
+                      {% if row[4] == 4 %}  <option value="4" selected>4</option>    {% else %} <option value="4">4 </option>  {% endif %}
+                      {% if row[4] == 5 %}  <option value="5" selected>5</option>    {% else %} <option value="5">5 </option>  {% endif %}
+                      {% if row[4] == 6 %}  <option value="6" selected>6</option>    {% else %} <option value="6">6 </option>  {% endif %}
+                      {% if row[4] == 7 %}  <option value="7" selected>7</option>    {% else %} <option value="7">7 </option>  {% endif %}
+                      {% if row[4] == 8 %}  <option value="8" selected>8</option>    {% else %} <option value="8">8 </option>  {% endif %}
+                      {% if row[4] == 9 %}  <option value="9" selected>9</option>    {% else %} <option value="9">9 </option>  {% endif %}
+                      {% if row[4] == 10 %} <option value="10" selected>10</option> {% else %}  <option value="10">10</option> {% endif %}
+                       </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Field</label>
+                        <input class="form-control" type="text" id="field" value="{{ row[5] }} " name="field" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Pre-requisite</label>
+                        <input class="form-control" type="text" id="pre_req" value="{{ row[6] }} " name="pre_req" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Pre-certificate</label>
+                        <input class="form-control" type="text" id="pre_c" value="{{ row[7] }} " name="pre_c" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Programing language</label>
+                        <input class="form-control" type="text" id="prog_l" value="{{ row[8] }} " name="prog_l" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Duration of exam preparation</label>
+                      <!--   <input class="form-control" type="text" id="duration" value="{ row[9] } " name="duration" required>-->
+
+
+                       <select class="form-control" id="duration" name="duration" required >
+                           {% if row[9] =='long' %}  <option value="long" selected>Long term - up to year</option> {% else %}  <option value="long" >Long term - up to year</option>{% endif %}
+                           {% if row[9] =='short' %} <option value="short" selected>Short term </option>           {% else %}  <option value="short">Short term </option>{% endif %}
+                       </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Certificate title</label>
+                        <input class="form-control" type="text" id="exam" value="{{ row[10] }} " name="exam" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">Description</label>
+                        <input class="form-control" type="text" id="description" value="{{ row[11] }} " name="description" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold ">URL link</label>
+                        <input class="form-control" type="text" id="URLlink" value="{{ row[12] }} " name="URLlink" required>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <button class="btn btn-primary font-weight-bold btn-block" type="submit">Update</button>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a class="btn font-weight-bold  btn-block" href="/home"
+                                   style="background-color:#DCDCDC; color:#FFFFFF ">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+</body>
+</html>

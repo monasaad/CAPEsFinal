@@ -15,9 +15,10 @@ from flask import Flask, render_template, redirect, url_for, request, session
 user = ""
 app = Flask(__name__)
 mail = Mail(app)
-if __name__ == '__main__':
+if __name__ == '_main_':
     app.run()
 
+# configuration for mail, upload image ,app
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 UPLOAD_FOLDER = 'static/logos/'
 app.secret_key = 'CAPEs secret key CAPEs'
@@ -32,74 +33,111 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
-# vendor home page
+# Vendor home page
 @app.route('/home', methods=["GET", "POST"])
 def home():
+    #check if user logged in
     if session['logged_in'] == False:  return render_template('Login.html')
+    #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
         title = request.form['tit']
-        return redirect(url_for('update', pe=title))
-    user = session['username']
-    con = sqlite3.connect('CAPEsDatabase.db')
+        return redirect(url_for('edit', pe=title))
+        # if the vendor click on edit icon for specific exam,
+        # vendor will redirect to updtae funtion with the title of that exam
+    #else
+    # retrieve exams information for specific vendor by vendor id
+    user = session['username'] # get vendor user name
+    con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     with con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + user + "'")
-        rows = cur.fetchall()
-    return render_template('home.html', rows=rows)
+        cur = con.cursor() #create cursor to save query result #create cursor to save query result
+        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + user + "'") # query
+        rows = cur.fetchall() # get result
+    return render_template('home.html', rows=rows) #send result data to the html page
 
 
 # vendor list page
 @app.route('/list', methods=["GET", "POST"])
 def ViewListVendors():
+    # check if user logged in , if not redirect to login page , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
-    user = session['username']
-    conn = sqlite3.connect("CAPEsDatabase.db")
-    cursor = conn.cursor()
-    result = cursor.execute(" SELECT * FROM  vendor ")
-    rows = result.fetchall()
-    return render_template('beneficiary/vendor-list.html', c=rows)
+    user = session['username'] # get username
+    conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    cursor = conn.cursor() #create cursor to save query result
+    result = cursor.execute(" SELECT * FROM  vendor ") # query
+    rows = result.fetchall() # get result
+    return render_template('beneficiary/vendor-list.html', c=rows)#send result data to the html page
 
 
 # vendor details page
 @app.route('/de/<v_username>', methods=["GET", "POST"])
 def ViewVendorDetails(v_username):
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
-    user = session['username']
-    conn = sqlite3.connect("CAPEsDatabase.db")
-    cursor = conn.cursor()
-    result = cursor.execute(" SELECT * FROM  vendor where v_username ='" + v_username + "'")
+    user = session['username'] # get username
+    conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    cursor = conn.cursor() #create cursor to save query result
+    result = cursor.execute(" SELECT * FROM  vendor where v_username ='" + v_username + "'") # query
     with conn:
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + v_username + "'")
-        rows = cur.fetchall()
-    return render_template('beneficiary/vendor-details.html', c=result, users=v_username, user=user, rows=rows)
+        cur = conn.cursor() #create cursor to save query result
+        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + v_username + "'") # query
+        rows = cur.fetchall() # get result
+    return render_template('beneficiary/vendor-details.html', c=result, users=v_username, user=user, rows=rows)#send result data to the html page
 
 
 # Beneficiary  recommecndation page
 @app.route('/recommendation')
 def RecommendationPEs():
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
-    conn = sqlite3.connect("CAPEsDatabase.db")
-    cursor = conn.cursor()
-    cursor.execute(" SELECT * FROM result where b_id='" + session['username'] + "'")
-    result = cursor.fetchall()
-    return render_template('beneficiary/recommendation.html', rows=result)
+    conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    cursor = conn.cursor() #create cursor to save query result
+    cursor.execute(" SELECT * FROM result where b_id='" + session['username'] + "'") # query
+    result = cursor.fetchall() # get result
+    return render_template('beneficiary/recommendation.html', rows=result)#send result data to the html page
 
 
 # todo ?
 # beneficiary home page
 @app.route('/bhome')
 def Bhome():
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
     user = session['username']
-    return render_template('beneficiary/home.html')
+    session['counter'] = 0
+    session['exam'] = []
+    session['link'] = []
+    session['vendor'] = []
+    session['certificate'] = []
+    session['list_matching'] = []
+    session['question_result'] = []
+    session['training_pattern'] = []
+    session['training_keyword'] = []
+    session['accepted_c'] = []
+    session['result_preC'] = []
+    session['uniq'] = []
+    session['rude_counter'] = 0
+    session['res'] = ''
+    session['inpput'] = ''
+    session['count_q7'] = 1
+    session['counter_q'] = 1
+    session['rude_flag'] = False
+    session['questionN'] = 'What is your major?'
+    session['temp'] = ' '
+    session['exit_flag'] = False
+    session['reapet'] = False
+    session['res_rude'] = ''
+    session['q_count'] = 0
+    return render_template('beneficiary/home.html')# redirect to the html page
 
 
 # vendor add PE page
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False:  return render_template('Login.html')
+    #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
+        #store information vendor entered into proper variable
         title = request.form['title']
         v_username = session['username']
         major =request.form.get('major')
@@ -113,30 +151,34 @@ def add():
         description = request.form['description']
         URLlink = request.form['URLlink']
 
-        conn = sqlite3.connect("CAPEsDatabase.db")
-        cursor = conn.cursor()
+        conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+        cursor = conn.cursor() #create cursor to save query result
         cursor.execute('INSERT INTO certificate VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', (
-            None, title, v_username, major, level, field, pre_req, pre_c, prog_l, duration, description, exam_name,
-            URLlink))
+            None, title, v_username, major, level, field, pre_req, pre_c, prog_l, duration, description, exam_name,URLlink))# query
         conn.commit()
         cursor.close()
         conn.close()
-        return redirect(url_for('home'))
-    return render_template("vendor/add.html")
+        return redirect(url_for('home'))# Redirect to vendor home page in case of succesfully added
+    return render_template("vendor/add.html")# Redirect to add page in case of unsuccesfully added
 
 
-# vendor update PE page
-@app.route('/update/<pe>', methods=['GET', 'POST'])
-def update(pe):
+# vendor edit PE page
+@app.route('/edit/<pe>', methods=['GET', 'POST'])
+def edit(pe):# edit function take PE_id as parameter
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False: return render_template('Login.html')
+    # check request type "if the request method equal Get then retreve data from the database"
+
     if request.method == "GET":
-        conn = sqlite3.connect("CAPEsDatabase.db")
-        cursor = conn.cursor()
-        result = cursor.execute(" SELECT * FROM  certificate where p_id='" + pe + "'")
-        return render_template('vendor/update.html', info=result)
+        conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+        cursor = conn.cursor() #create cursor to save query result
+        result = cursor.execute(" SELECT * FROM  certificate where p_id='" + pe + "'")# query
+        return render_template('vendor/edit.html', info=result) #send result data to the html page
+
+    #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
+        # store information vendor entered into proper variable
         title = request.form['title']
-        v_username = session['username']
         major = request.form.get('major')
         level = request.form.get('level')
         field = request.form['field']
@@ -148,8 +190,8 @@ def update(pe):
         description = request.form['description']
         URLlink = request.form['URLlink']
 
-        conn = sqlite3.connect("CAPEsDatabase.db")
-        cursor = conn.cursor()
+        conn = sqlite3.connect("CAPEsDatabase.db") # connect to the database
+        cursor = conn.cursor() #create cursor to save query result
         cursor.execute("UPDATE certificate SET name='" + title +
                        "', major='" + major +
                        "', level='" + level +
@@ -161,259 +203,228 @@ def update(pe):
                        "', description='" + description +
                        "', exams='" + exam_name +
                        "', URLlink='" + URLlink +
-                       "' WHERE  p_id='" + pe + "';")
+                       "' WHERE  p_id='" + pe + "';")# query
         conn.commit()
         cursor.close()
         conn.close()
-        return redirect(url_for('home'))
-    return render_template("vendor/update.html")
+        return redirect(url_for('home'))# Redirect to vendor home page in case of succesfully edit
+    return render_template("vendor/edit.html")# Redirect to edit page in case of unsuccesfully edit
 
 
 # delete vendor info page
 @app.route('/delete/<pe>', methods=['GET', 'POST'])
-def delete(pe):
+def delete(pe): #delete  function take PE_id as parameter
+    # check if user logged in , if not redirect to login page
     if session['logged_in'] == False: return render_template('Login.html')
-    user = session['username']
-    conn = sqlite3.connect("CAPEsDatabase.db")
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM certificate WHERE p_id=?', (pe,))
+    conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    cursor = conn.cursor() #create cursor to save query result
+    cursor.execute('DELETE FROM certificate WHERE p_id=?', (pe,))# query
     conn.commit()
-    return redirect(url_for('home'))
+    return redirect(url_for('home'))# Redirect to vendor home page
 
-
-# upload vendor info page
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
-    # Check if a valid image file was uploaded
-    if request.method == 'POST':
-        print("hi rnrn")
-
-        if 'img' not in request.files:
-            print("hi leen")
-            return redirect(request.url)
-        file = request.files['img']
-        print("hi lnrn")
-        if file.filename == '':
-            print("hello")
-            return redirect(request.url)
-
-        if file and allowed_file(file.filename):
-            print("hi")
-            # The image file seems valid!
-            # Get the filenames and pass copy in logo dir and keep it in database
-            name = request.form['username']
-            password = request.form['password']
-            desc = request.form['descption']
-            email = request.form['email']
-            conn = sqlite3.connect("CAPEsDatabase.db")
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO vendor VALUES (?,?,?,?,?)', (name, password, desc, email, file.filename))
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            conn.commit()
-            cursor.close()
-            conn.close()
-        return render_template('upload.html')
-    # If no valid image file was uploaded, show the file upload form:
-    return render_template('upload.html', error="Not added")
-
-
-# method for upload vendor image
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # reset password page
 @app.route('/resetpassword')
 def resetpassword():
-    return render_template('resetpassword.html')
+    return render_template('resetpassword.html')# redirect to the html page
 
 
 # login page
 @app.route('/', methods=['GET', 'POST'])
 def Login():
-    session['logged_in'] = False
-    error = None
+    # check if user logged in , if not redirect to login page
+    session['logged_in'] = False # set session logged in false
+    error = None #set error none
+    # check request type "if the user click on button the request method will be post"
     if request.method == 'POST':
+        # store user information entered into proper variable
         username = request.form['username']
         password = request.form['password']
-        completion = b_validate(username, password)
+
+        completion = b_validate(username, password)#send username and  password to beneficiary validate
+        #check if user is a beneficiary, where completion status = ture
         if completion == False:
+            # send username and  password to vendor validate
             completion = v_validate(username, password)
+            # check if user is a vendor, where completion status = ture
             if completion == False:
+                # if user not beneficiary or vendor set error message
                 error = 'Invalid Credentials. Please try again.'
             else:
-                session['logged_in'] = True
-                return redirect(url_for('home'))
+                session['logged_in'] = True #set flage logeed in to true
+                return redirect(url_for('home'))#in case vlaid vendor redirect to vendor home page
         else:
-            session['logged_in'] = True
-            return redirect(url_for('Bhome'))
-    if 'forgetpass' in session:
-        error2 = session['forgetpass']
-    else:
-        error2 = None
-    return render_template('Login.html', error=error, error2=error2)
+            session['logged_in'] = True #set flage logeed in to true
+            return redirect(url_for('Bhome')) #in case vlaid beneficiary redirect to beneficiary home page
+
+    return render_template('Login.html', error=error)# redirect to the html page with error data
 
 
 # method for beneficiary login
 def b_validate(username, password):
-    print(username)
-    print(password)
-    con = sqlite3.connect('CAPEsDatabase.db')
-    completion = False
+    con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    completion = False #set completion to false
     with con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM beneficiary")
-        rows = cur.fetchall()
-        for row in rows:
+        cur = con.cursor() #create cursor to save query result
+        cur.execute("SELECT * FROM beneficiary")# query
+        rows = cur.fetchall() # get result
+        for row in rows: # fetch  each row in data base
+            # store username and password into proper variable
             dbUser = row[0]
             dbPass = row[1]
-            print(dbUser)
-            print(dbPass)
-            if ((dbUser == username) and (dbPass == password)):
-                session['username'] = dbUser
-                completion = True
+            if ((dbUser == username) and (dbPass == password)):# check if user entries match with data in the data database
+                session['username'] = dbUser #set session username with beneficiary
+                completion = True #set completion to true
     return completion
 
 
 # method for vendor login
 def v_validate(username, password):
-    con = sqlite3.connect('CAPEsDatabase.db')
-    completion = False
+    con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    completion = False  #set completion to false
     with con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM vendor")
-        rows = cur.fetchall()
+        cur = con.cursor() #create cursor to save query result
+        cur.execute("SELECT * FROM vendor")# query
+        rows = cur.fetchall() # get result
         for row in rows:
+            # store username and password into proper variable
             dbUser = row[0]
             dbPass = row[1]
-            if dbUser == username and dbPass == password:
-                session['username'] = dbUser
-                completion = True
+            if dbUser == username and dbPass == password:# check if user entries match with data in the data database
+                session['username'] = dbUser #set session username with vendor
+                completion = True #set completion to true
     return completion
 
 
 # logout
 @app.route('/logout')
 def logout():
-    return redirect(url_for('Login'))
+    return redirect(url_for('Login')) # redirect to log in home page
 
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
-    error = None
+    error = None # set error message to none
+    # check request type "if the user click on button the request method will be post"
     if request.method == 'POST':
+        # store token, password, confirm password into proper variable
         token = request.form['Token']
         password = request.form['password']
         ConfirmPassword = request.form['ConfirmPassword']
-        con = sqlite3.connect('CAPEsDatabase.db')
-        cur = con.cursor()
+        con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+        cur = con.cursor() #create cursor to save query result
         with con:
-            cur.execute("SELECT * FROM ResetPassword")
-            rows = cur.fetchall()
+            cur.execute("SELECT * FROM ResetPassword")# query
+            rows = cur.fetchall() # get result
             for row in rows:
+                # store username and token into proper variable
                 Token = row[1]
                 username = row[0]
-                if token == Token and username == session['username']:
-                    if password == ConfirmPassword:
-                        if session['table'] == 'vendor':
-                            cur.execute(" UPDATE vendor SET password ='" + password + "' Where v_username='" + session[
-                                'username'] + "'")
-                            cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))
+                if token == Token and username == session['username']:# if match with data from database
+                    if password == ConfirmPassword:# password, Confirm Password match
+                        if session['table'] == 'vendor': # session table contain vendor table name
+                            cur.execute(" UPDATE vendor SET password ='" + password + "' Where v_username='" + session['username'] + "'")# query
+                            cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))# query
                             con.commit()
-                            return redirect(url_for('Login'))
-                        elif session['table'] == 'beneficiary':
+                            return redirect(url_for('Login')) # redirect to login page
+                        elif session['table'] == 'beneficiary': # session table contain beneficiary table name
                             cur.execute(
-                                " UPDATE beneficiary SET password ='" + password + "' Where b_username='" + session[
-                                    'username'] + "'")
-                            cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))
+                                " UPDATE beneficiary SET password ='" + password + "' Where b_username='" + session['username'] + "'")# query
+                            cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))# query
                             con.commit()
-                            return redirect(url_for('Login'))
+                            return redirect(url_for('Login'))# redirect to login page
                         else:
                             con.commit()
                     else:
-                        error = "Password and Confirm Password fields not matching"
-                        return render_template('resetpassword.html', error=error)
+                        error = "Password and Confirm Password fields not matching"# set error message if password, Confirm Password does not match
+                        return render_template('resetpassword.html', error=error)#redirect to html page with error mesaage
                 else:
                     error = "Please enter a valid token"
-                    return render_template('resetpassword.html', error=error)
-    return render_template('resetpassword.html', error=error)
+                    return render_template('resetpassword.html', error=error)# set error message if  invalied token
+    return render_template('resetpassword.html', error=error)#redirect to html page with error mesaage
 
 
 # method for vendor login
 def E_validate(Email):
-    completion = False
-    con = sqlite3.connect('CAPEsDatabase.db')
+    completion = False #set completion to false
+    con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     with con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM vendor")
-        rows = cur.fetchall()
-        for row in rows:
+        cur = con.cursor() #create cursor to save query result
+        cur.execute("SELECT * FROM vendor")# query
+        rows = cur.fetchall() # get result
+        for row in rows:# fetch each row
+            # store email into proper variable
             email = row[3]
-            if email.lower() == Email.lower():
-                completion = True
+            if email.lower() == Email.lower():# if match with data from database
+                completion = True #set completion to true
                 con.commit()
-                session['table'] = 'vendor'
-                return (completion, row[0])
+                session['table'] = 'vendor' #set session value to "vendor"
+                return (completion, row[0]) # return the vendor usernaem and completion status
             else:
                 with con:
-                    cur.execute("SELECT * FROM beneficiary")
-                    rows = cur.fetchall()
-                    for row in rows:
+                    cur.execute("SELECT * FROM beneficiary")# query
+                    rows = cur.fetchall() # get result
+                    for row in rows: # fetch each row
+                        # store email into proper variable
                         email = row[3]
-                        if email.lower() == Email.lower():
-                            completion = True
+                        if email.lower() == Email.lower():# if match with data from database
+                            completion = True #set completion to true
                             con.commit()
-                            session['table'] = 'beneficiary'
-                            return (completion, row[0])
+                            session['table'] = 'beneficiary' #set session value to "beneficiary"
+                            return (completion, row[0]) # return the beneficiary usernaem and completion status
     if completion == False:
-        return (completion, None)
+        return (completion, None) # return none completion status if completion is flase
 
 
 def sendmassage(token, email):
+    #send message take token and user email as parameter
+    #then send message with title and sender email and email body with token
     msg = Message('Reset Password', sender='2020capes@gmail.com', recipients=[email])
     msg.body = "Hello \nDear user use this token to reset your password : " + token
-    mail.send(msg)
+    mail.send(msg) # send the emqil
     return None
 
 
 def get_random_string(length=5, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
+    # this function to generate random token of lenght 5 digit
     return ''.join(random.choice(allowed_chars) for i in range(length))
 
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def ForgotPassword():
     error = None
+    # check request type "if the user click on button the request method will be post"
     if request.method == 'POST':
+        # store user information entered into proper variable
         email = request.form['email']
-        completion, username = E_validate(email)
+        completion, username = E_validate(email)# send email to email validate function
         if completion == False:
-            error = 'Invalid Credentials. Please try again.'
-            return render_template('forgetpassword.html', error=error)
+            error = 'Invalid Credentials. Please try again.' # set error message
+            return render_template('forgetpassword.html', error=error)# return to html page with error message
         elif completion == True and username is not None:
-            token = get_random_string()
-            con = sqlite3.connect('CAPEsDatabase.db')
-            cur = con.cursor()
-            cur.execute('INSERT INTO ResetPassword VALUES (?,?)', (username, token))
+            token = get_random_string() # call function to generate random token
+            con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+            cur = con.cursor() #create cursor to save query result
+            cur.execute('INSERT INTO ResetPassword VALUES (?,?)', (username, token))# query
             con.commit()
             cur.close()
             con.close()
-            sendmassage(token, email)
-            session['username'] = username
-            return redirect(url_for('reset'))
-    if request.method == 'GET':
-        return render_template('forgetpassword.html', error=error)
+            sendmassage(token, email) # call send message function with token and user email
+            session['username'] = username # set session with username
+            return redirect(url_for('reset')) # redirect user to reset password page
+    if request.method == 'GET': # if request method is get
+        return render_template('forgetpassword.html', error=error)# return to html page with error message
 
 
 
-# ________________________
+# ________
 
 # TODO: chat
 nlp = spacy.load("en_core_web_md")
 warnings.simplefilter("error", UserWarning)
 connection = sqlite3.connect('CAPEsDatabase.db', check_same_thread=False)
-cursor = connection.cursor()
+cursor = connection.cursor() 
 
 
 def randomID():
@@ -426,7 +437,6 @@ def randomID():
         return randomID()
 
 
-# todo remove comment
 wave_emoji = emoji.emojize(':wave:', use_aliases=True)
 smile_emoji = emoji.emojize(':smile:', use_aliases=True)
 thumbs_emoji = emoji.emojize(':thumbs_up:', use_aliases=True)
@@ -544,7 +554,7 @@ def generalKeyword(user_input, query):
     cursor.execute("SELECT keyword FROM keyword Where id_c = ?", [query])
     result = cursor.fetchall()
     #todo print
-    print('_____genKey___',result)
+    print('__genKey__',result)
     for row in result:
         training_keyword.append(row[0])
         match = SequenceMatcher(None, user_input, row[0]).find_longest_match(0, len(user_input), 0, len(row[0]))
@@ -565,8 +575,8 @@ def patternSimilarity(user_input):
     print('user_cleaned', user_cleaned)
     similarity_list = []
     if len(user_cleaned) > 0:
-        user_input_cleaned = lemmatize(user_cleaned)
-        token1 = nlp(user_input_cleaned)
+        # user_input_cleaned = lemmatize(user_cleaned)
+        token1 = nlp(user_cleaned)
         for row in training_pattern:
             token2 = nlp(row)
             try:
@@ -624,12 +634,15 @@ def rudeKeyword(user_input, count):
 def response(word_type, id_g, count, user_input):
     res = session['res']
     question_result = session['question_result']
-    temp = session['temp']
+    # temp = session['temp']
     questionN = session['questionN']
     temp = session['questionN']
     i_val = random.choice([0, 1])
     cursor.execute("SELECT ans2 FROM response Where id_c = ?", [id_g])
     result = cursor.fetchall()
+    # todo
+    print("___________resp-----")
+    print(word_type, id_g, count, user_input)
     if id_g == 2:
         if word_type._contains('result') | word_type.contains_('record'):
             session['res'] = result[0][0] + "<br /><br /> Now," + temp
@@ -659,29 +672,66 @@ def checkGeneralKeyword(user_input, count):
     print('list mtach vluae in gen:', session['list_matching'], len(session['list_matching']))
     if len(general) != 0:
         #todo print
-        print('________________enter gen_______________')
-
+        print('_____enter gen______')
         pattern_similarity = patternSimilarity(user_input)
+        print("ENTERD****", pattern_similarity)
         if pattern_similarity > 0.7:
-            response(general, 2, count, user_input)
+            # todo
+            print("ENTERD****")
+            response(session['list_matching'], 2, count, user_input)
+        else:
+            # todo print
+            print('_____enter weth______')
+            generalKeyword(user_input, 3)
+            # todo print
+            print('wether', session['list_matching'])
+            weather = session['list_matching']
+            if len(weather) != 0:
+                # todo print
+                print('_____enter weth2______')
+                pattern_similarity = patternSimilarity(user_input)
+                print("*****pattern_similarity ****", pattern_similarity)
+                if pattern_similarity > 0.65:
+                    response(session['list_matching'], 3, count, user_input)
+                else:
+                    # todo print
+                    print('_____enter soory______')
+                    session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
+                    data_ca = (question_result[count], user_input, user, 'continue',
+                               "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
+                    uploadCA(data_ca)
+            else:
+                # todo print
+                print('_____enter soory______')
+                session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
+                data_ca = (question_result[count], user_input, user, 'continue',
+                           "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
+                uploadCA(data_ca)
     else:
         #todo print
-        print('________________enter weth_______________')
-
+        print('_____enter weth______')
         generalKeyword(user_input, 3)
         #todo print
         print('wether',session['list_matching'])
         weather = session['list_matching']
         if len(weather) != 0:
             #todo print
-            print('________________enter weth2_______________')
+            print('_____enter weth2______')
             pattern_similarity = patternSimilarity(user_input)
+            #todo
+            print("pattern_similarity", pattern_similarity)
             if pattern_similarity > 0.65:
-                response(weather, 3, count, user_input)
+                response(session['list_matching'], 3, count, user_input)
+            else:
+                # todo print
+                print('_____enter soory______')
+                session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
+                data_ca = (question_result[count], user_input, user, 'continue',
+                           "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
+                uploadCA(data_ca)
         else:
             #todo print
-            print('________________enter soory_______________')
-
+            print('_____enter soory______')
             session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
             data_ca = (question_result[count], user_input, user, 'continue',
                        "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
@@ -729,7 +779,7 @@ def question():
                         print("pattern_similarity", pattern_similarity)
                         if pattern_similarity > 0.7:
                             # todo list mathc for key
-                            print('list mathc for key_________', session['list_matching'])
+                            print('list mathc for key_____', session['list_matching'])
                             keyword = ','.join(session['list_matching'])
                             user_input_removed_keywords = "".join(removeKeyword(user_input))
                             for word in non_value:  # check none values
@@ -877,7 +927,7 @@ def findCertificate():
         elif len_m <= 0:
             major.append('')
         len_m -= 1
-    # ___________________________
+    # _________
     level = []
     len_l = len(a[0][1])
     max = 0
@@ -912,7 +962,7 @@ def findCertificate():
             max = asnum
         level.append(max)
         len_l -= 1
-    # __________________________
+    # __________
     filed = []
     len_f = len(a[0][2])
     for x in range(0, 3):
@@ -931,7 +981,7 @@ def findCertificate():
         elif len_f <= 0:
             filed.append('')
         len_f -= 1
-    # ___________________________
+    # _________
     program_language = []
     len_p = len(a[0][3])
     for x in range(0, 3):
@@ -948,7 +998,7 @@ def findCertificate():
         elif len_p <= 0:
             program_language.append('')
         len_p -= 1
-    # ________________________
+    # ________
     vendor_name = []
     len_v = len(a[0][4])
     for x in range(0, 3):
@@ -964,7 +1014,7 @@ def findCertificate():
         elif len_v <= 0:
             vendor_name.append('')
         len_v -= 1
-    # ________________________
+    # ________
     duration = []
     len_d = len(a[0][5])
     for x in range(0, 3):
@@ -1034,27 +1084,23 @@ def uploadCA(data):
     connection.commit()
 
 
-# ______________________
+# ________
 
 @app.route('/get')
 def get_bot_response():
-    res = session['res']
-    counter = session['counter']
-    uniq = session['uniq']
-    result_preC = session['result_preC']
-    accepted_c = session['accepted_c']
 
+    counter = session['counter']
     userText = request.args.get('msg')
     getinput(userText)
     getQuestion()
 
     if counter < 6:
         question()
-    elif counter == 6:
+    elif session['counter'] == 6:
         q7_check_ans(session['uniq'])
         session['counter'] += 1
         print_result(session['accepted_c'], session['result_preC'], random_id)
-    elif counter > 6:
+    elif session['counter'] > 6:
         session['res'] = 'If you want to try again reload this page <3'
 
     x = setinput()

@@ -13,9 +13,9 @@ from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, request, session
 
 
-app = Flask(_name_)
+app = Flask(__name__)
 mail = Mail(app)
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run()
 
 # configuration for mail, upload image ,app
@@ -27,7 +27,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = '2020capes@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Senoritas2020'
+#app.config['MAIL_PASSWORD'] = 'Senoritas2020'
+app.config['MAIL_PASSWORD'] = 'fzlesmygrpwjnbxq'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -91,7 +92,7 @@ def RecommendationPEs():
     if session['logged_in'] == False:  return render_template('Login.html')
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
-    cursor.execute(" SELECT * FROM result where b_id='" + session['username'] + "'") # query
+    cursor.execute("SELECT MIN(r_id) AS r_id, b_id, certificate, vendor ,exam ,link FROM result where b_id='" + session['username'] + "' GROUP BY certificate") # query
     result = cursor.fetchall() # get result
     return render_template('beneficiary/recommendation.html', rows=result)#send result data to the html page
 
@@ -127,6 +128,7 @@ def Bhome():
     session['reapet'] = False
     session['res_rude'] = ''
     session['q_count'] = 0
+    session['random_id'] = randomID()
     return render_template('beneficiary/home.html')# redirect to the html page
 
 
@@ -302,7 +304,6 @@ def v_validate(username, password):
 def logout():
     return redirect(url_for('Login')) # redirect to log in home page
 
-
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
     error = None # set error message to none
@@ -314,15 +315,10 @@ def reset():
         ConfirmPassword = request.form['ConfirmPassword']
         con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
         cur = con.cursor() #create cursor to save query result
-        with con:
-            cur.execute("SELECT * FROM ResetPassword")# query
-            rows = cur.fetchall() # get result
-            for row in rows:
-                # store username and token into proper variable
-                Token = row[1]
-                username = row[0]
-                if token == Token and username == session['username']:# if match with data from database
-                    if password == ConfirmPassword:# password, Confirm Password match
+        completion = token_validate(session['username'] , token)  # send username and  password to beneficiary validate
+                # check if exist username and token , where completion status = ture
+        if completion == True :
+            if password == ConfirmPassword:# password, Confirm Password match
                         if session['table'] == 'vendor': # session table contain vendor table name
                             cur.execute(" UPDATE vendor SET password ='" + password + "' Where v_username='" + session['username'] + "'")# query
                             cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))# query
@@ -336,10 +332,10 @@ def reset():
                             return redirect(url_for('Login'))# redirect to login page
                         else:
                             con.commit()
-                    else:
+            else:
                         error = "Password and Confirm Password fields not matching"# set error message if password, Confirm Password does not match
                         return render_template('resetpassword.html', error=error)#redirect to html page with error mesaage
-                else:
+        else:
                     error = "Please enter a valid token"
                     return render_template('resetpassword.html', error=error)# set error message if  invalied token
     return render_template('resetpassword.html', error=error)#redirect to html page with error mesaage
@@ -416,6 +412,21 @@ def ForgotPassword():
     if request.method == 'GET': # if request method is get
         return render_template('forgetpassword.html', error=error)# return to html page with error message
 
+# method for token validate
+def token_validate(username, token):
+    con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
+    completion = False #set completion to false
+    with con:
+        cur = con.cursor() #create cursor to save query result
+        cur.execute("SELECT * FROM ResetPassword")# query
+        rows = cur.fetchall() # get result
+        for row in rows: # fetch  each row in data base
+            # store username and token into proper variable
+            dbUser = row[0]
+            dbtoken = row[1]
+            if ((dbUser == username) and (dbtoken == token)):# check if user entries match with data in the data database
+                completion = True #set completion to true
+    return completion
 
 
 # ________
@@ -424,7 +435,7 @@ def ForgotPassword():
 nlp = spacy.load("en_core_web_md")
 warnings.simplefilter("error", UserWarning)
 connection = sqlite3.connect('CAPEsDatabase.db', check_same_thread=False)
-cursor = connection.cursor() 
+cursor = connection.cursor()
 
 
 def randomID():
@@ -456,7 +467,7 @@ def setinput():
 
 # TODO remove comment
 non_value = ['no', 'neither', 'not', 'non', 'all', 'every', 'dont', 'both', 'any', 'each', 'nothing', 'nor']
-random_id = randomID()
+# random_id = randomID()
 
 
 def getQuestion():
@@ -611,7 +622,7 @@ def rudeKeyword(user_input, count):
     #todo print
     print('listM after', session['list_matching'])
     for word in session['list_matching']:
-        if user_input._contains_(word):
+        if user_input.__contains__(word):
             #todo print
             print('enter thier is rude')
             if session['rude_counter'] < 2:
@@ -643,7 +654,7 @@ def response(word_type, id_g, count, user_input):
     print("___________resp-----")
     print(word_type, id_g, count, user_input)
     if id_g == 2:
-        if word_type._contains('result') | word_type.contains_('record'):
+        if word_type.__contains__('result') | word_type.__contains__('record'):
             session['res'] = result[0][0] + "<br /><br /> Now," + temp
             data_ca = (question_result[count], user_input, session['username'], 'continue', result[0][0])
             uploadCA(data_ca)
@@ -782,10 +793,10 @@ def question():
                             keyword = ','.join(session['list_matching'])
                             user_input_removed_keywords = "".join(removeKeyword(user_input))
                             for word in non_value:  # check none values
-                                if user_input._contains_(word):
+                                if user_input.__contains__(word):
                                     keyword = "%"
                             data = (
-                                random_id, user_input, user_input_removed_keywords, keyword, pattern_similarity,
+                                session['random_id'], user_input, user_input_removed_keywords, keyword, pattern_similarity,
                                 questions_joint)
                             uploadLog(data)
                             if counter == 5:
@@ -834,7 +845,7 @@ def print_result(accepted_list, result, w):
     #todo print
     print('acented inlast', accepted_list)
     print('result in last', result)
-    if accepted_list._len_() != 0:
+    if accepted_list.__len__() != 0:
         session['res'] = "I found the most matching certificate for you: </br></br>"
         count = 1
         for row in result:
@@ -849,7 +860,7 @@ def print_result(accepted_list, result, w):
                 count += 1
             else:
                 continue
-        session['res'] += 'If you want more information you can go to <b>Recommendation</b>tab</br>'
+        session['res'] += 'If you want more information you can go to <b>Recommendation</b> tab</br>'
     else:
         # print("Sorry, I can not found the most matching certificate for you")
         session['res'] = 'Sorry, I could not found the most matching certificate for you' + grimacing_emoji
@@ -868,7 +879,7 @@ def q7_check_ans(uniq):
     data_ca = (res, ans, session['username'], 'continue', 'after those question the result will show')
     uploadCA(data_ca)
     while q_count >= 0:
-        if ans._contains_(str(q_count)):
+        if ans.__contains__(str(q_count)):
             try:
                 session['accepted_c'].append(uniq[q_count])
             except IndexError:
@@ -889,7 +900,7 @@ def findCertificate():
     uniq = session['uniq']
     accepted_c = session['accepted_c']
     count_q7 = session['count_q7']
-    w = random_id
+    w = session['random_id']
     # w = 9502
 
     cursor.execute("SELECT  keywords FROM log WHERE qNumer=?", [w])
@@ -906,20 +917,20 @@ def findCertificate():
                 # print(result[k][i])
                 a[k][j].append(v)
     # for access a q1
-    # print(a[0][0])
+    #print(a[0][0][0])
     major = []
     len_m = len(a[0][0])
     for x in range(0, 3):
         if len_m > 0:
-            if a[0][0][x]._contains_('computer science'):
+            if a[0][0][x].__contains__('computer science'):
                 major.append('%cs%')
-            elif a[0][0][x]._contains_('computer information system'):
+            elif a[0][0][x].__contains__('computer information system'):
                 major.append('%cis%')
-            elif a[0][0][x]._contains_('cyber security'):
+            elif a[0][0][x].__contains__('cyber security'):
                 major.append('%cys%')
-            elif a[0][0][x]._contains_('artificial intelligent'):
+            elif a[0][0][x].__contains__('artificial intelligent'):
                 major.append('%ai%')
-            elif a[0][0][x]._contains_('%'):
+            elif a[0][0][x].__contains__('%'):
                 major.append('%')
             else:
                 major.append('%' + a[0][0][x] + '%')
@@ -1044,7 +1055,7 @@ def findCertificate():
             session['uniq'].append(x[2])
             seen.add(x[2])
 
-    session['count_q7'] = session['uniq']._len_()
+    session['count_q7'] = session['uniq'].__len__()
     # todo print
     print('uniq', session['uniq'])
     print('uniq num', session['count_q7'])
@@ -1098,7 +1109,7 @@ def get_bot_response():
     elif session['counter'] == 6:
         q7_check_ans(session['uniq'])
         session['counter'] += 1
-        print_result(session['accepted_c'], session['result_preC'], random_id)
+        print_result(session['accepted_c'], session['result_preC'], session['random_id'])
     elif session['counter'] > 6:
         session['res'] = 'If you want to try again reload this page <3'
 

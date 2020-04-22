@@ -3,6 +3,7 @@
 <head>
     <title>Home</title>
     <meta charset="utf-8">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
@@ -64,17 +65,17 @@
             {% for row in rows %}
                 <button class="collapsible gradient btn-lg" style=" width: 100% " data-toggle="collapse"
                         data-target="#i-{{ loop.index }}" role="button">
-                    {{ row[1] }}
+                    {{ row[11] }}
                 </button>
                 <div class="collapse" id="i-{{ loop.index }}">
                     <table width='100%' class="table table-striped">
                         <tr>
                             <th width='25%' class="text-left">Professional Exams</th>
-                            <td width='75%'>{{ row[1].capitalize() }}</td>
+                            <td width='75%'>{{ row[11].capitalize() }}</td>
                         </tr>
                         <tr>
                             <th width='25%' class="text-left">Certificate</th>
-                            <td width='75%'>{{ (row[2]).capitalize() }}</td>
+                            <td width='75%'>{{ (row[1]).capitalize() }}</td>
                         </tr>
                         <tr>
                             <th width='25%' class="text-left">Major</th>
@@ -154,11 +155,11 @@
                                 <form id="edit" style="display: inline; -webkit-box-shadow: none;	-moz-box-shadow: none;	box-shadow: none;" method='POST' enctype="multipart/form-data">
                                     <input type="text" id="tit" style="display: none;  visibility: hidden;" value="{{ row[0] }}" name='tit'>
                                     <button class="btn" type="submit">
-                                        <i class='fa fa-edit fa-2x' style="color:#70707f;"></i>
+                                        <img src="static/logos/edit.png.jpg" hight="40px" width="40px" />
                                     </button>
                                 </form>
                                 <button class="btn" id="delete" onclick='dele("{{ row[0] }}","{{ row[1] }} ")'>
-                                    <i class="fa fa-trash fa-2x" style="color:#70707f; "></i>
+                                    <img src="static/logos/trash.png.jpg" hight="40px" width="40px" />
                                 </button>
                             </td>
                         </tr>

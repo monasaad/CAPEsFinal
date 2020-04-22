@@ -128,7 +128,7 @@ def Bhome():
     session['reapet'] = False
     session['res_rude'] = ''
     session['q_count'] = 0
-    session['random_id'] = randomID()
+  #  session['random_id'] = randomID()
     return render_template('beneficiary/home.html')# redirect to the html page
 
 
@@ -194,7 +194,9 @@ def edit(pe):# edit function take PE_id as parameter
 
         conn = sqlite3.connect("CAPEsDatabase.db") # connect to the database
         cursor = conn.cursor() #create cursor to save query result
-        cursor.execute("UPDATE certificate SET name='" + title +
+        cursor.execute(" SELECT exams FROM certificate where p_id='" + pe + "'")
+        exam_title = cursor.fetchall()
+        cursor.execute("UPDATE certificate SET name='" + title   +
                        "', major='" + major +
                        "', level='" + level +
                        "', field='" + field +
@@ -206,6 +208,11 @@ def edit(pe):# edit function take PE_id as parameter
                        "', exams='" + exam_name +
                        "', URLlink='" + URLlink +
                        "' WHERE  p_id='" + pe + "';")# query
+        print(exam_title)
+        cursor.execute("UPDATE result SET certificate='" + title +
+                       "', exam='" + exam_name +
+                       "', link='" + URLlink +
+                       "' WHERE  exam='" +exam_title[0][0] + "';")  # query
         conn.commit()
         cursor.close()
         conn.close()
@@ -220,7 +227,13 @@ def delete(pe): #delete  function take PE_id as parameter
     if session['logged_in'] == False: return render_template('Login.html')
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
+    print(pe)
+    cursor.execute("SELECT exams FROM certificate where p_id='" + pe + "'")
+    exam_title = cursor.fetchall()
+    print(exam_title)
+
     cursor.execute('DELETE FROM certificate WHERE p_id=?', (pe,))# query
+    cursor.execute('DELETE FROM result WHERE exam=?',(exam_title[0][0],))# query
     conn.commit()
     return redirect(url_for('home'))# Redirect to vendor home page
 

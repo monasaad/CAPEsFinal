@@ -749,13 +749,13 @@ def question():
     question_result = session['question_result']
     questions_joint = session['questionN']
     user_input = inpput # user input
-     if user_input.__contains__('ing'):
+    """if user_input.__contains__('ing'):
         print('------------------------E---------------------------')
         user_input = ''.join(user_input.split())[:-3]
     else:
         print('------------------------N---------------------------')
 
-        user_input
+        user_input"""
         
     print('qus', questions_joint)
     print('use input', user_input)

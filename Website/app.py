@@ -11,6 +11,7 @@ from difflib import SequenceMatcher
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, redirect, url_for, request, session
+from textblob import TextBlob
 
 
 app = Flask(__name__)
@@ -39,7 +40,7 @@ mail = Mail(app)
 @app.route('/home', methods=["GET", "POST"])
 def home():
     #check if user logged in
-    if session['logged_in'] == False:  return render_template('Login.html')
+    if session['logged_in'] == False:  return redirect(url_for('Login'))
     #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
         title = request.form['tit']
@@ -52,48 +53,74 @@ def home():
     con = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     with con:
         cur = con.cursor() #create cursor to save query result #create cursor to save query result
-        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + user + "'") # query
+        cur.execute("SELECT * FROM PE WHERE lower(vendor_username) ='" + user + "'") # query
         rows = cur.fetchall() # get result
-    return render_template('home.html', rows=rows) #send result data to the html page
+    s=[]
+    f=[]
+    l = []
+    i=0
+
+    for row in rows:
+               s.append([i + "s" for i in (row[3]).split("s") if i])
+               f.append([ i for i in (row[5]).split(",") if i])
+               l.append([ i for i in (row[8]).split(",") if i])
+    print(s)
+    print(f)
+    print(l)
+
+    return render_template('home.html', rows=rows ,s=s,f=f,l=l) #send result data to the html page
 
 
 # vendor list page
 @app.route('/list', methods=["GET", "POST"])
 def ViewListVendors():
     # check if user logged in , if not redirect to login page , if not redirect to login page
-    if session['logged_in'] == False:  return render_template('Login.html')
+    if session['logged_in'] == False:   return redirect(url_for('Login'))
     user = session['username'] # get username
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
-    result = cursor.execute(" SELECT * FROM  vendor ") # query
+    result = cursor.execute(" SELECT * FROM vendor ") # query
     rows = result.fetchall() # get result
     return render_template('beneficiary/vendor-list.html', c=rows)#send result data to the html page
 
 
+
 # vendor details page
-@app.route('/de/<v_username>', methods=["GET", "POST"])
-def ViewVendorDetails(v_username):
+@app.route('/de/<vendor_username>', methods=["GET", "POST"])
+def ViewVendorDetails(vendor_username):
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False:  return render_template('Login.html')
+    if session['logged_in'] == False:   return redirect(url_for('Login'))
     user = session['username'] # get username
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
-    result = cursor.execute(" SELECT * FROM  vendor where v_username ='" + v_username + "'") # query
+    result = cursor.execute(" SELECT * FROM  vendor where vendor_username ='" + vendor_username + "'") # query
     with conn:
         cur = conn.cursor() #create cursor to save query result
-        cur.execute("SELECT * FROM certificate WHERE lower(v_username) ='" + v_username + "'") # query
+        cur.execute("SELECT * FROM PE WHERE lower(vendor_username) ='" + vendor_username + "'") # query
         rows = cur.fetchall() # get result
-    return render_template('beneficiary/vendor-details.html', c=result, users=v_username, user=user, rows=rows)#send result data to the html page
+        s = []
+        f = []
+        l = []
+        i = 0
+
+        for row in rows:
+            s.append([i + "s" for i in (row[3]).split("s") if i])
+            f.append([i for i in (row[5]).split(",") if i])
+            l.append([i for i in (row[8]).split(",") if i])
+        print(s)
+        print(f)
+        print(l)
+    return render_template('beneficiary/vendor-details.html', c=result, users=vendor_username, user=user, rows=rows,s=s,f=f,l=l)#send result data to the html page
 
 
 # Beneficiary  recommecndation page
 @app.route('/recommendation')
 def RecommendationPEs():
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False:  return render_template('Login.html')
+    if session['logged_in'] == False:   return redirect(url_for('Login'))
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
-    cursor.execute("SELECT MIN(r_id) AS r_id, b_id, certificate, vendor ,exam ,link FROM result where b_id='" + session['username'] + "' GROUP BY certificate") # query
+    cursor.execute("SELECT MIN(result_id) AS result_id, beneficiary_username, certificate, vendor ,exam ,url_link FROM result where beneficiary_username='" + session['username'] + "' GROUP BY certificate") # query
     result = cursor.fetchall() # get result
     return render_template('beneficiary/recommendation.html', rows=result)#send result data to the html page
 
@@ -103,14 +130,15 @@ def RecommendationPEs():
 @app.route('/bhome')
 def Bhome():
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False:  return render_template('Login.html')
-    print(session['username'])
+    if session['logged_in'] == False:   return redirect(url_for('Login'))
+    #print(session['username'])
     session['counter'] = 0
     session['exam'] = []
-    session['link'] = []
+    session['url_link'] = []
     session['vendor'] = []
     session['certificate'] = []
     session['list_matching'] = []
+    session['listUserWord'] = []
     session['question_result'] = []
     session['training_pattern'] = []
     session['training_keyword'] = []
@@ -132,89 +160,169 @@ def Bhome():
     session['random_id'] = randomID()
     return render_template('beneficiary/home.html')# redirect to the html page
 
-
 # vendor add PE page
 @app.route("/add", methods=["GET", "POST"])
 def add():
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False:  return render_template('Login.html')
+    if session['logged_in'] == False:  return redirect(url_for('Login'))
     #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
         #store information vendor entered into proper variable
         title = request.form['title']
-        v_username = session['username']
-        major =request.form.get('major')
+        vendor_username = session['username']
+        check =request.form.getlist('major')
+        major = ""
+        for i in check:
+            major = major + i
+
         level = request.form.get('level')
-        field = request.form['field']
-        pre_req = request.form['pre_req']
-        pre_c = request.form['pre_c']
-        prog_l = request.form['prog_l']
+
+        field = request.form.getlist('field')
+        fields = ""
+        for i in field:
+            fields = fields + i+","
+
+
+        pre_requisite = request.form['pre_requisite']
+        if pre_requisite == "" :pre_requisite= 'NULL' #None
+        pre_certificate = request.form['pre_certificate']
+        if pre_certificate == "" :pre_certificate= 'NULL' #None
+
+        programing_language = request.form.getlist('programing_language')
+        lang = ""
+        for i in programing_language:
+            lang = lang + i + ","
+
+
         duration = request.form.get('duration')
         exam_name = request.form['exam']
         description = request.form['description']
-        URLlink = request.form['URLlink']
+        url_link = request.form['url_link']
 
         conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
         cursor = conn.cursor() #create cursor to save query result
-        cursor.execute('INSERT INTO certificate VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', (
-            None, title, v_username, major, level, field, pre_req, pre_c, prog_l, duration, description, exam_name,URLlink))# query
+        cursor.execute('INSERT INTO PE VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', (
+            None, title, vendor_username, major, level, fields, pre_requisite, pre_certificate, lang, duration, description, exam_name,url_link))# query
+        for item in field:
+             cursor.execute("UPDATE keyword  SET question_id = 3 where keyword='" + item.lower() + "'")
+        for item in programing_language:
+             cursor.execute("UPDATE keyword  SET question_id = 4 where keyword='" + item.lower() + "'")
+
         conn.commit()
         cursor.close()
         conn.close()
         return redirect(url_for('home'))# Redirect to vendor home page in case of succesfully added
-    return render_template("vendor/add.html")# Redirect to add page in case of unsuccesfully added
 
+    conn = sqlite3.connect('CAPEsDatabase.db')  # connect to the database
+    cursor = conn.cursor()  # create cursor to save query result
+    cursor.execute(" SELECT keyword FROM  keyword where context_id = 6")  # query
+    Field =cursor.fetchall()  # get result
+    cursor.execute(" SELECT keyword FROM  keyword where context_id = 5 ")  # query
+    language = cursor.fetchall()  # get result
+    return render_template("vendor/add.html", Field=Field ,language=language)# Redirect to add page in case of unsuccesfully added
 
 
 # vendor edit PE page
 @app.route('/edit/<pe>', methods=['GET', 'POST'])
 def edit(pe):# edit function take PE_id as parameter
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False: return render_template('Login.html')
+    if session['logged_in'] == False:  return redirect(url_for('Login'))
     # check request type "if the request method equal Get then retreve data from the database"
 
     if request.method == "GET":
         conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
         cursor = conn.cursor() #create cursor to save query result
-        result = cursor.execute(" SELECT * FROM  certificate where p_id='" + pe + "'")# query
-        return render_template('vendor/edit.html', info=result) #send result data to the html page
+        result = cursor.execute(" SELECT * FROM  PE where pe_id='" + pe + "'")# query
+        res= result.fetchall()
+
+        conn = sqlite3.connect('CAPEsDatabase.db')  # connect to the database
+        cursor = conn.cursor()  # create cursor to save query result
+        cursor.execute(" SELECT keyword FROM  keyword where context_id=6")  # query
+        Field = cursor.fetchall()  # get result
+        language = cursor.execute(" SELECT keyword FROM  keyword where context_id=5 ")  # query
+        language = cursor.fetchall()  # get result
+        for i in (res[0][3]):
+            s = [i + "s" for i in (res[0][3]).split("s") if i]
+
+        print(Field)
+        print(language)
+
+        f = []
+        l = []
+        i = 0
+
+        for row in res:
+            print(row[5])
+            print(row[8])
+            f=[i for i in (row[5]).split(",") if i]
+            l=[i for i in (row[8]).split(",") if i]
+
+        print(f)
+        print(l)
+        return render_template("vendor/edit.html",info=res, Field=Field, language=language,l=l,f=f,s=s) #send result data to the html page
+
 
     #check request type "if the user click on button the reguest method will be post"
     if request.method == "POST":
+
         # store information vendor entered into proper variable
-        title = request.form['title']
-        major = request.form.get('major')
-        level = request.form.get('level')
-        field = request.form['field']
-        pre_req = request.form['pre_req']
-        pre_c = request.form['pre_c']
-        prog_l = request.form['prog_l']
-        duration = request.form.get('duration')
-        exam_name = request.form['exam']
-        description = request.form['description']
-        URLlink = request.form['URLlink']
+        title   = request.form['title']
+        check = request.form.getlist('major')
+        major = ""
+        for i in check:
+            major = major + i
+
+        level        = request.form.get('level')
+        field = request.form.getlist('field')
+        fields = ""
+        for i in field:
+            fields = fields + i + ","
+
+
+        pre_requisite = request.form['pre_requisite']
+        print(pre_requisite)
+        if pre_requisite == "" : pre_requisite = 'NULL' #None
+        pre_certificate = request.form['pre_certificate']
+        print(pre_certificate)
+        if pre_certificate == "" : pre_certificate = 'NULL' #None
+        programing_language = request.form.getlist('programing_language')
+        lang = ""
+        for i in programing_language:
+            lang = lang + i + ","
+
+        duration     = request.form.get('duration')
+        exam_name    = request.form['exam']
+        description  = request.form['description']
+        url_link      = request.form['url_link']
+
 
         conn = sqlite3.connect("CAPEsDatabase.db") # connect to the database
         cursor = conn.cursor() #create cursor to save query result
-        cursor.execute(" SELECT exams FROM certificate where p_id='" + pe + "'")
+        cursor.execute(" SELECT exams FROM PE where pe_id='" + pe + "'")
         exam_title = cursor.fetchall()
-        cursor.execute("UPDATE certificate SET name='" + title   +
+
+        cursor.execute("UPDATE PE SET name ='"+title+
                        "', major='" + major +
                        "', level='" + level +
-                       "', field='" + field +
-                       "', pre_req='" + pre_req +
-                       "', pre_c='" + pre_c +
-                       "', prog_l='" + prog_l +
+                       "', field='" + fields +
+                       "', pre_requisite='" + pre_requisite +
+                       "', pre_certificate='" + pre_certificate +
+                       "', programing_language='" + lang +
                        "', duration='" + duration +
                        "', description='" + description +
                        "', exams='" + exam_name +
-                       "', URLlink='" + URLlink +
-                       "' WHERE  p_id='" + pe + "';")# query
-        print(exam_title)
+                       "', url_link='" + url_link +
+                       "' WHERE  pe_id='" + pe + "';")# query
+
         cursor.execute("UPDATE result SET certificate='" + title +
                        "', exam='" + exam_name +
-                       "', link='" + URLlink +
+                       "', url_link='" + url_link +
                        "' WHERE  exam='" +exam_title[0][0] + "';")  # query
+
+        for item in field:
+             cursor.execute("UPDATE keyword  SET question_id = 3 where keyword='" + item.lower()+ "'")
+        for item in programing_language:
+             cursor.execute("UPDATE keyword  SET question_id = 4 where keyword='" + item.lower() + "'")
         conn.commit()
         cursor.close()
         conn.close()
@@ -226,12 +334,12 @@ def edit(pe):# edit function take PE_id as parameter
 @app.route('/delete/<pe>', methods=['GET', 'POST'])
 def delete(pe): #delete  function take PE_id as parameter
     # check if user logged in , if not redirect to login page
-    if session['logged_in'] == False: return render_template('Login.html')
+    if session['logged_in'] == False:  return redirect(url_for('Login'))
     conn = sqlite3.connect('CAPEsDatabase.db') # connect to the database
     cursor = conn.cursor() #create cursor to save query result
-    cursor.execute("SELECT exams FROM certificate where p_id='" + pe + "'")#query
+    cursor.execute("SELECT exams FROM PE where pe_id='" + pe + "'")#query
     exam_title = cursor.fetchall()
-    cursor.execute('DELETE FROM certificate WHERE p_id=?', (pe,))# query
+    cursor.execute('DELETE FROM PE WHERE pe_id=?', (pe,))# query
     cursor.execute('DELETE FROM result WHERE exam=?',(exam_title[0][0],))# query
     conn.commit()
     return redirect(url_for('home'))# Redirect to vendor home page
@@ -333,13 +441,13 @@ def reset():
         if completion == True :
             if password == ConfirmPassword:# password, Confirm Password match
                         if session['table'] == 'vendor': # session table contain vendor table name
-                            cur.execute(" UPDATE vendor SET password ='" + password + "' Where v_username='" + session['username'] + "'")# query
+                            cur.execute(" UPDATE vendor SET password ='" + password + "' Where vendor_username='" + session['username'] + "'")# query
                             cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))# query
                             con.commit()
                             return redirect(url_for('Login')) # redirect to login page
                         elif session['table'] == 'beneficiary': # session table contain beneficiary table name
                             cur.execute(
-                                " UPDATE beneficiary SET password ='" + password + "' Where b_username='" + session['username'] + "'")# query
+                                " UPDATE beneficiary SET password ='" + password + "' Where beneficiary_username='" + session['username'] + "'")# query
                             cur.execute('DELETE FROM ResetPassword WHERE username=?', (session['username'],))# query
                             con.commit()
                             return redirect(url_for('Login'))# redirect to login page
@@ -452,7 +560,7 @@ cursor = connection.cursor()
 
 # genaret random number for chat
 def randomID():
-    cursor.execute("SELECT qNumer FROM log")
+    cursor.execute("SELECT conversation_id FROM log")
     result = [i[0] for i in cursor.fetchall()] # save the result
     i = random.randint(0, 10000) # genarate random number
     if i not in result: # check if i is not in the result
@@ -476,7 +584,7 @@ def getinput(input):
 def setinput():
     res = session['res']
     # todo print
-    print('res from setinput()', res)
+    #print('res from setinput()', res)
     return res
 
 
@@ -489,7 +597,7 @@ def getQuestion():
     # question_result = session['question_result']
     cursor.execute("SELECT question FROM questions")
     session['question_result'] = [i[0] for i in cursor.fetchall()]
-    print('question_result in getQuestion() ', session['question_result'])
+    #print('question_result in getQuestion() ', session['question_result'])
 
 
 # check if user typed 'q' to finsh chating or if the program end by the chat it self 'f'
@@ -511,48 +619,114 @@ def exitProgram(x, quz):
         session['exit_flag'] = True # make exit flag session true
 
 
-# get the pattern form pattern table by the id_r for each question
+# get the pattern form pattern table by the question_id for each question
 def getPattern(query):
     training_pattern = session['training_pattern']
     training_pattern.clear() # clear the arayy before use again
-    print('qury', query)
-    cursor.execute("SELECT anwser_p FROM pattern Where id_r = ?", [query])
+    #print('qury', query)
+    cursor.execute("SELECT pattern FROM pattern Where question_id = ?", [query])
     patterns = cursor.fetchall() # save result
     for row in patterns: # add each pattern in the list
         training_pattern.append(row[0])
 
-    print('training_pattern from getPattern()', training_pattern)
+    #print('training_pattern from getPattern()', training_pattern)
     return training_pattern
 
 
 # take the keyword from session['list_matching'] and remove it from user input
 def removeKeyword(user_input):
     list_matching = session['list_matching']
-    print('list_matching from removeKeyword()', list_matching)
-    keys = ' '.join(list_matching).split() # aggregation all keyword in the list matching
-    removed_keyword = ' '.join(word for word in user_input.split() if word not in keys) # aggregation all word without the key word in the list matching
+    #print('listUserWord from removeKeyword()', session['listUserWord'])
+    keys = ' '.join(session['listUserWord']).split() # aggregation all keyword in the list matching
+    removed_keyword = ' '.join(word for word in user_input.split() if word not in keys ) # aggregation all word without the key word in the list matching
     return removed_keyword
 
 
-# get keyword for id_r quesion from kerword table then find the match keyword from user input if thier is by using SequenceMatcher and save it in session
+# get keyword for question_id quesion from kerword table then find the match keyword from user input if thier is by using SequenceMatcher and save it in session
 def getKeyword(user_input, query):
     list_matching = session['list_matching']
     list_matching.clear() # clear the arayy before use again
     training_keyword = session['training_keyword']
     training_keyword.clear() # clear the arayy before use again
-    cursor.execute("SELECT keyword FROM keyword Where id_r = ?", [query])
+    session['listUserWord'].clear()
+    listofuserkeyword = []
+    user_inputAfterSplit = []
+    user_inputwithoutCorrect = []
+
+    # the simialr value to compare
+    if query == 6:
+        sim_value = 0.8
+    else:
+        sim_value = 0.703
+
+    cursor.execute("SELECT keyword FROM keyword Where question_id = ?", [query])
     keyword = cursor.fetchall() # save result
-    print('user input from getKeyword()', user_input)
+
+    print('input', user_input)
     print('keyword from getKeyword()', keyword)
     for row in keyword:
         training_keyword.append(row[0])
         match = SequenceMatcher(None, user_input, row[0]).find_longest_match(0, len(user_input), 0, len(row[0]))
         list_matching.append(row[0][match.b: match.b + match.size])
-        list_matching = list(set(list_matching).intersection(set(training_keyword)))
         session['list_matching'] = list(set(list_matching).intersection(set(training_keyword)))
 
-    print("training_keyword from getKeyword()", training_keyword)
-    print('list_matching from getKeyword()', list_matching)
+
+    print("list_matching session", session['list_matching'])
+
+    # add in new list
+    for word in session['list_matching']:
+        for uttrence in user_input.split():
+            if uttrence.__contains__(word):
+                session['listUserWord'].append(uttrence) # keyword inside listUserWord
+
+    print('listUserWord session', session['listUserWord'])
+
+    # reomove the keyword that found *****to extract the pattern only???
+    if session['list_matching'].__len__() != 0:
+        print('---------------------------enter list != 0 -----------------')
+        """for keyw in session['list_matching']:
+            if keyw == 'c++': # becuse it make errors
+                user_inputwithoutCorrect = re.split('c\+\+', user_input) # remove the keyword from user input -> pattern
+            else:
+                user_inputwithoutCorrect = re.split(keyw, user_input) # remove the keyword from user input -> pattern"""
+        removed_keyword = ' '.join(word for word in user_input.split() if word not in session['listUserWord'])
+        user_inputwithoutCorrect = removed_keyword.split()
+    else:
+        print('---------------------------enter list = 0 -----------------')
+        user_inputwithoutCorrect = user_input.split()
+
+    print('user_inputwithoutCorrect',user_inputwithoutCorrect)
+
+    # to correct typo
+    for word in user_inputwithoutCorrect:
+        user_inputAfterSplit.append(str(TextBlob(word).correct()))
+
+    print('user_inputAfterSplit',user_inputAfterSplit)
+
+    wordcount = 0
+    if not query == 2: # if not the level
+        for patternK in user_inputAfterSplit:
+            print("patternK", patternK)
+            onePattern1 = nlp(patternK) # remove spaces why????
+            print("onePattern1", onePattern1)
+            for key in keyword:
+                if key[0] not in session['list_matching']:
+                    onePattern = nlp(key[0])
+                    #print("onePattern", onePattern)
+                    try:
+                        similarity = onePattern1.similarity(onePattern)
+                        print('similarity', similarity)
+                    except UserWarning:
+                        similarity = 0
+                    # keep track of highest score
+                    if similarity > sim_value:
+                        session['list_matching'].append(key[0])
+                        session['listUserWord'].append(user_inputwithoutCorrect[wordcount]) #new
+            wordcount += 1
+
+    #print("training_keyword from getKeyword()", training_keyword)
+    print('list_matching from getKeyword()', session['list_matching'])
+    print('listUserWord from getKeyword()', session['listUserWord'])
 
 
 # by using regular expertion this function remove the unwanted charcers like: /$%^...
@@ -569,13 +743,15 @@ def lemmatize(user_input):
     return user_input_lemmatized
 
 
-# get general keyword for id_c quesion from kerword table then find the match keyword from user input if thier is by using SequenceMatcher and save it in session
+# get general keyword for context_id quesion from kerword table then find the match keyword from user input if thier is by using SequenceMatcher and save it in session
 def generalKeyword(user_input, query):
     list_matching = session['list_matching']
     list_matching.clear() # clear the arayy before use again
     training_keyword = session['training_keyword']
     training_keyword.clear() # clear the arayy before use again
-    cursor.execute("SELECT keyword FROM keyword Where id_c = ?", [query])
+    user_inputAfterSplit = []
+    user_inputwithoutCorrect = []
+    cursor.execute("SELECT keyword FROM keyword Where context_id = ?", [query])
     result = cursor.fetchall() # save the result
 
     print('general Keywords from generalKeyword()',result)
@@ -587,20 +763,66 @@ def generalKeyword(user_input, query):
         session['list_matching'] = list(set(list_matching).intersection(set(training_keyword)))
 
     print('list matching from generalKeyword()', session['list_matching'])
+    # add in new list
+    for word in session['list_matching']:
+        for uttrence in user_input.split():
+            if uttrence.__contains__(word):
+                session['listUserWord'].append(uttrence)
+
+    print('befor list_matching from generalKeyword()', session['list_matching'])
+    print(' befor listUserWord from generalKeyword()', session['listUserWord'])
+    if not query == 4:
+        # reomove the keyword that found hhhhhhhhhhhhhhhhhhhh
+        if session['list_matching'].__len__() != 0:
+            print('---------------------------enter G list != 0 -----------------')
+            removed_keyword = ' '.join(word for word in user_input.split() if word not in session['listUserWord'])
+            user_inputwithoutCorrect = removed_keyword.split()
+        else:
+            print('---------------------------enter G list = 0 -----------------')
+            user_inputwithoutCorrect = user_input.split()
+
+        print('without G',user_inputwithoutCorrect)
+        # to correct typo
+        for word in user_inputwithoutCorrect:
+            user_inputAfterSplit.append(str(TextBlob(word).correct()))
+
+        print('user_inputAfter G',user_inputAfterSplit)
+
+        wordcount = 0
+        for patternK in user_inputAfterSplit:
+            print(patternK)
+            onePattern1 = nlp(patternK.replace(" ", ""))
+            for key in result:
+                if key[0] not in session['list_matching']:
+                    onePattern = nlp(key[0])
+                    try:
+                        similarity = onePattern1.similarity(onePattern)
+                        print('similarity', similarity)
+                    except UserWarning:
+                        similarity = 0
+                    # keep track of highest score
+                    if similarity > 0.7:
+                        session['list_matching'].append(key[0])
+                        session['listUserWord'].append(user_inputwithoutCorrect[wordcount]) #new
+            wordcount += 1
+
+    #print("training_keyword from getKeyword()", training_keyword)
+    print('list_matching from getKeyword()', session['list_matching'])
+    print('listUserWord from getKeyword()', session['listUserWord'])
 
 
 # this function use spacy to calculate the similarty between the user input and each pattern in database for spicefic question then return the max
 def patternSimilarity(user_input):
     training_pattern = session['training_pattern']
 
-    print('form patternSimilarity() training_pattern', training_pattern)
+    #print('form patternSimilarity() training_pattern', training_pattern)
     user = removeKeyword(user_input) # call this function to remove keyword
     user_cleaned = removeSpecialCharacters(user) # call this function to remove unwanted Characters
-
+    user_cleaned = str(TextBlob(user_cleaned).correct()) # to check the typo
     print('user_cleaned form patternSimilarity()', user_cleaned)
     similarity_list = []
     if len(user_cleaned) > 0: # if the user cleand sentence not empty do the similarty
-        # user_input_cleaned = lemmatize(user_cleaned)
+        user_input_cleaned = lemmatize(user_cleaned)
         token1 = nlp(user_cleaned)
         for row in training_pattern:
             token2 = nlp(row)
@@ -609,6 +831,7 @@ def patternSimilarity(user_input):
             except UserWarning:
                 similarity = 0.0
             similarity_list.append(similarity)
+        print(max(similarity_list))
         return max(similarity_list)
     else: # else -which mean the user enter just keyword without any addtional word- return 1
         return 1
@@ -621,18 +844,18 @@ def rudeKeyword(user_input, count):
     session['list_matching'] = [ ]
     session['reapet'] = False
     #todo print
-    print('---------------rude-----------------------')
-    print('rude count from rudeKeyword()', session['rude_counter'])
-    print('questionN from rudeKeyword()', questionN)
-    print('list Matching from rudeKeyword()', session['list_matching'])
+    #print('rude count from rudeKeyword()', session['rude_counter'])
+    #print('---------------rude-----------------------')
+    #print('questionN from rudeKeyword()', questionN)
+    #print('list Matching from rudeKeyword()', session['list_matching'])
 
     generalKeyword(user_input, 4) # call rude word from database
     #todo print
-    print('list Matching after', session['list_matching'])
+    #print('list Matching after', session['list_matching'])
     for word in session['list_matching']:
         if user_input.__contains__(word):
             #todo print
-            print('enter thier is rude')
+            #print('enter thier is rude')
             if session['rude_counter'] < 2:
                 resp = 'This a warning for using a rude word!<br><br>'
                 session['reapet'] = True
@@ -654,10 +877,10 @@ def response(word_type, id_g, count, user_input):
     question_result = session['question_result']
     temp = session['questionN']
     i_val = random.choice([0, 1])
-    cursor.execute("SELECT ans2 FROM response Where id_c = ?", [id_g])
+    cursor.execute("SELECT response FROM response Where context_id = ?", [id_g])
     result = cursor.fetchall()
-    print("____________response value in response()________________")
-    print(word_type, id_g, count, user_input)
+    #print("____________response value in response()________________")
+    #print(word_type, id_g, count, user_input)
     if id_g == 2:
         if word_type.__contains__('result') | word_type.__contains__('record'):
             session['res'] = result[0][0] + "<br /><br /> Now, " + temp
@@ -682,58 +905,58 @@ def checkGeneralKeyword(user_input, count):
     temp = questionN
     generalKeyword(user_input, 2) # call general word from database
     general = session['list_matching']
-    print('list mtach vluae in checkGeneralKeyword():', session['list_matching'], len(session['list_matching']))
+    #print('list mtach vluae in checkGeneralKeyword():', session['list_matching'], len(session['list_matching']))
     if len(general) != 0:
-        print('_____enter general case______')
+        #print('_____enter general case______')
         pattern_similarity = patternSimilarity(user_input)
-        print("pattern_similarity in checkGeneralKeyword()", pattern_similarity)
+        #print("pattern_similarity in checkGeneralKeyword()", pattern_similarity)
         if pattern_similarity > 0.7:
-            print("ENTERD to get response")
+            #print("ENTERD to get response")
             response(session['list_matching'], 2, count, user_input) # call this function to get the response
         else:
-            print('_____enter weather case______')
+            #print('_____enter weather case______')
             generalKeyword(user_input, 3) # call weather word from database
-            print('wether list matching', session['list_matching'])
+            #print('wether list matching', session['list_matching'])
             weather = session['list_matching']
             if len(weather) != 0:
-                print('_____enter wether2______')
+                #print('_____enter wether2______')
                 pattern_similarity = patternSimilarity(user_input)
-                print("*****pattern_similarity ****", pattern_similarity)
+                #print("*****pattern_similarity ****", pattern_similarity)
                 if pattern_similarity > 0.65:
                     response(session['list_matching'], 3, count, user_input) # call this function to get the response
                 else:
                     # todo print
-                    print('_____enter sorry______')
+                    #print('_____enter sorry______')
                     session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
                     data_ca = (question_result[count], user_input, session['username'], 'continue',
                                "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                     uploadCA(data_ca)
             else:
-                print('_____enter sorry______')
+                #print('_____enter sorry______')
                 session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
                 data_ca = (question_result[count], user_input, session['username'], 'continue',
                            "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                 uploadCA(data_ca)
     else:
-        print('_____enter weather case______')
+        #print('_____enter weather case______')
         generalKeyword(user_input, 3) # call general word from database
-        print('weather list matching',session['list_matching'])
+        #print('weather list matching',session['list_matching'])
         weather = session['list_matching']
         if len(weather) != 0:
-            print('_____enter weth2______')
+            #print('_____enter weth2______')
             pattern_similarity = patternSimilarity(user_input)
-            print("pattern_similarity", pattern_similarity)
+            #print("pattern_similarity", pattern_similarity)
             if pattern_similarity > 0.65:
                 response(session['list_matching'], 3, count, user_input) # call this function to get the response
             else:
-                print('_____enter sorry______')
+                #print('_____enter sorry______')
                 session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
                 data_ca = (question_result[count], user_input, session['username'], 'continue',
                            "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
                 uploadCA(data_ca)
         else:
             #todo print
-            print('_____enter sorry______')
+            #print('_____enter sorry______')
             session['res'] = "Sorry, I did not understand you" + grimacing_emoji + " <br /><br /> " + temp
             data_ca = (question_result[count], user_input, session['username'], 'continue',
                        "Sorry, I did not understand you" + grimacing_emoji + "and go next question")
@@ -749,6 +972,7 @@ def question():
     question_result = session['question_result']
     questions_joint = session['questionN']
     user_input = inpput # user input
+
     """if user_input.__contains__('ing'):
         print('------------------------E---------------------------')
         user_input = ''.join(user_input.split())[:-3]
@@ -756,9 +980,9 @@ def question():
         print('------------------------N---------------------------')
 
         user_input"""
-        
-    print('qus', questions_joint)
-    print('use input', user_input)
+
+    #print('qus', questions_joint)
+    #print('use input', user_input)
     user_input = removeSpecialCharacters(user_input) # remove unwanted Character from the input
     exitProgram(user_input, questions_joint) # check the input if it is equl 'q'
     if not session['exit_flag']: # if the flag = Flase
@@ -767,14 +991,14 @@ def question():
             session['res'] = session['res_rude'] + session['questionN']
         else:
             if not session['rude_flag']: # if flag = Flase
-                print('count+1', counter + 1)
+                #print('count+1', counter + 1)
                 getPattern(counter + 1) # get the pattern of the quesion x
                 getKeyword(user_input, counter + 1) # get the keyword of the quesion x
                 if len(session['list_matching']) != 0: # if there is a match keyword enter if condetion
                     pattern_similarity = patternSimilarity(user_input) # count the similartiy and save the value in pattern_similarity
-                    print("pattern_similarity", pattern_similarity)
+                    #print("pattern_similarity", pattern_similarity)
                     if pattern_similarity > 0.7:
-                        print('list maching _____', session['list_matching'])
+                        #print('list maching _____', session['list_matching'])
                         keyword = ','.join(session['list_matching']) # gathering the keyword in keyword varibale and put beetwen them , .
                         user_input_removed_keywords = "".join(removeKeyword(user_input)) # the user input without keyword
                         for word in non_value:  # check none values
@@ -797,14 +1021,14 @@ def question():
                             session['questionN'] = questions_joint
                             session['res'] = questions_joint
                             # todo print
-                            print('questionN', questionN)
-                            print('res', session['res'])
+                            #print('questionN', questionN)
+                            #print('res', session['res'])
                         elif counter == 5:
                             session['res'] = findCertificate()
                         session['counter'] += 1
-                        print('counter', counter)
+                        #print('counter', counter)
                         session['counter_q'] += 1
-                        print('counterq', counter_q)
+                        #print('counterq', counter_q)
                     else: # if the similarty <0.7
                         checkGeneralKeyword(user_input, counter)
                 else: # if list matching = 0
@@ -814,7 +1038,7 @@ def question():
 # insert the keyword of each question in log table.
 def uploadLog(data):
     cursor.execute(
-        "INSERT INTO log (qNumer, userAns, textWithOutKey, keywords , patternAsimilarity, question) "
+        "INSERT INTO log (conversation_id, user_input, text_without_keyword, keywords , pattern_similarity, question) "
         "VALUES (?, ?, ?, ?, ?, ?)", data)
     connection.commit()
 
@@ -824,20 +1048,20 @@ def print_result(accepted_list, result, w):
     certificate = session['certificate']
     vendor = session['vendor']
     exam = session['exam']
-    link = session['link']
-    print('accepted_list in print_result', accepted_list)
-    print('result in print_result', result)
+    url_link = session['url_link']
+    #print('accepted_list in print_result', accepted_list)
+    #print('result in print_result', result)
     if accepted_list.__len__() != 0: # if there is result have found print it
         session['res'] = "I found the most matching certificate for you: </br></br>"
         count = 1
         for row in result:
-            if row[2] in accepted_list: # if the certificate that have pre_certificate had taken add it
+            if row[2] in accepted_list: # if the certificate that have pre_certificateertificate had taken add it
                 certificate = row[0]
                 vendor = row[1]
                 exam = row[3]
-                link = row[4]
+                url_link = row[4]
                 session['res'] += str(count) + "- " + certificate + ".</br></br>"
-                data = (session['username'], certificate, vendor, exam, link)
+                data = (session['username'], certificate, vendor, exam, url_link)
                 uploadResult(data) # uplaod the result
                 count += 1
             else:
@@ -852,8 +1076,8 @@ def print_result(accepted_list, result, w):
 # take the anwser of the 7th qusetion and accordeing to the result save the final rsutlt.
 def q7_check_ans(uniq):
     q_count = session['q_count']
-    print('q_count in q7' , q_count)
-    print('uniq in q7', uniq)
+    #print('q_count in q7' , q_count)
+    #print('uniq in q7', uniq)
     ans = session['inpput'] # take the user anwser from the session
     res = session['res']
 
@@ -869,7 +1093,7 @@ def q7_check_ans(uniq):
             'noting' # do nothing
         q_count -= 1
         session['q_count'] -= 1
-    print('accepted ones', session['accepted_c'])
+    #print('accepted ones', session['accepted_c'])
 
 
 # this function to genarate quesion 7
@@ -878,10 +1102,10 @@ def findCertificate():
     w = session['random_id']
     # w = 9502
 
-    cursor.execute("SELECT  keywords FROM log WHERE qNumer=?", [w]) # take the keywords from log table by the id of chat
+    cursor.execute("SELECT  keywords FROM log WHERE conversation_id=?", [w]) # take the keywords from log table by the id of chat
     result = cursor.fetchall()
     # todo print
-    print('result',result)
+    #print('result',result)
     a = [] # add the keyword here
     for k in range(1):
         a.append([])
@@ -1015,16 +1239,16 @@ def findCertificate():
             duration.append('')
         len_d -= 1
 
-    print("the keyword of each question in findcetificate()", major,level,filed,program_language,vendor_name,duration)
+    #print("the keyword of each question in findcetificate()", major,level,filed,program_language,vendor_name,duration)
     cursor.execute(
-        "SELECT name , v_username , pre_c , exams , urllink FROM certificate WHERE (major like ? or major like ? or major like ?)and (level <= ?) and (field like ? or field like ? or field like ? ) and (prog_l like ? or prog_l like 'null' or prog_l like ? or prog_l like ?)and (v_username like ? or v_username like ? or v_username like ?) and (duration like ? or duration like ? or duration like ?)",
+        "SELECT name , vendor_username , pre_certificate , exams , url_link FROM PE WHERE (major like ? or major like ? or major like ?)and (level <= ?) and (field like ? or field like ? or field like ? ) and (programing_language like ? or programing_language like 'null' or programing_language like ? or programing_language like ?)and (vendor_username like ? or vendor_username like ? or vendor_username like ?) and (duration like ? or duration like ? or duration like ?)",
         (major[0], major[1], major[2], level[0], filed[0], filed[1], filed[2],
          program_language[0],
          program_language[1], program_language[2], vendor_name[0], vendor_name[1], vendor_name[2], duration[0],
          duration[1], duration[2])) # this qury to get the certificate by take the user inputs. it will call from each one the name, vendor name, pre-cretificate and the link
     session['result_preC'] = cursor.fetchall()
     #todo print
-    print('result after filter', session['result_preC'])
+    #print('result after filter', session['result_preC'])
     seen = set()
     uniq = [] # to take the duplicate pre-certificate
     for x in session['result_preC']:
@@ -1033,21 +1257,23 @@ def findCertificate():
             seen.add(x[2])
 
     session['count_q7'] = session['uniq'].__len__() # take the length of the uinq as count for qeusion 7
-    print('uniq', session['uniq'])
-    print('uniq number', session['count_q7'])
-    print('q_count', session['q_count'])
+    #print('uniq', session['uniq'])
+    #print('uniq number', session['count_q7'])
+    #print('q_count', session['q_count'])
     # print('uniq:',uniq)
     qusion7 = ' '
     for row in session['uniq']: # check the pre-certificate to genarete the 7th question
+        #if not (row.__contains__(None)):
         if row != 'NULL': # if the value not null
             qusion7 += str(session['q_count']) + '-' + row + '</br>' # gether all in this varibele
+        #if row.__contains__(None):
         if row == 'NULL': # if null just append in accepted session
             session['accepted_c'].append(row)
         session['q_count'] = session['q_count'] + 1
         session['count_q7'] = session['count_q7'] - 1
     #todo print
-    print('q_count after', session['q_count'])
-    print('count_7', session['count_q7'])
+    #print('q_count after', session['q_count'])
+    #print('count_7', session['count_q7'])
     # print(qusion7)
     if qusion7.strip(): # if not null
         q7 = 'Do you have any certificates from this list?</br>' + qusion7 + 'Please enter all <b>numbers</b> for certificates you have.'
@@ -1059,13 +1285,13 @@ def findCertificate():
 
 # insert the result in result table
 def uploadResult(data):
-    cursor.execute("INSERT INTO result (b_id, certificate, vendor, exam, link) VALUES (?, ?, ?, ?, ?)", data)
+    cursor.execute("INSERT INTO result (beneficiary_username, certificate, vendor, exam, url_link) VALUES (?, ?, ?, ?, ?)", data)
     connection.commit()
 
 
 # insert the whole conversation in CA table
 def uploadCA(data):
-    cursor.execute("INSERT INTO CA (question, answer, b_id, complete_chat, response) VALUES (?, ?, ?, ?,?)", data)
+    cursor.execute("INSERT INTO CA (question, answer, beneficiary_username, session_status, response) VALUES (?, ?, ?, ?,?)", data)
     connection.commit()
 
 

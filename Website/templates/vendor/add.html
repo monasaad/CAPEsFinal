@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add PE</title>
+      <title>Add PE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
@@ -22,6 +22,8 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/js/standalone/selectize.min.js"></script>
     <script src="assets/js/script.min.js"></script>
 </head>
 <body>
@@ -57,42 +59,34 @@
             <br>
             <br>
             <form class="text-left" method='POST' enctype="multipart/form-data">
+            <div class="form-group">
+
+              <small style="color:darkred" >All fields with (*) are required.</small>
+
+                </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Title</label>
+                    <label class="font-weight-bold">PE Title*</label>
                     <input class="form-control" type="text" id="exam" name='exam' required>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Major</label>
-                <!--    <input class="form-control" type="text" id="Major" name="major" required>-->
-                      <select class="form-control" type="text" id="major" name="major" required >
-                        <optgroup label="Choose an option">
-                           <option value="cs">CS</option>
-                           <option value="cis">CIS</option>
-                           <option value="cys">CYS</option>
-                           <option value="ai">AI</option>
+                    <label class="font-weight-bold">Student's major*</label>
+                    <small class="text-muted">Student's major according to CCSIT</small>
+                 <!--   <select class="form-control" type="text" id="major" name="major" required >-->
+                    <br>
+                        <input type="checkbox" value="cs" name="major" > Computer Science
+                    <br>
+                        <input type="checkbox" value="cis" name="major"> Computer Information System
+                    <br>
+                        <input type="checkbox" value="cys" name="major"> Computer Cyber Security
+                     <br>
+                        <input type="checkbox" value="ai" name="major"> Artificial Intelligence
 
-                           <option value="cscis">CS, CIS</option>
-                           <option value="cscys">CS, CYS</option>
-                           <option value="csai">CS, AI</option>
-                           <option value="ciscys">CIS, CYS</option>
-                           <option value="cisai">CIS, AI</option>
-                           <option value="cysai">CYS, AI</option>
-
-                           <option value="csciscys">CS, CIS, CYS</option>
-                           <option value="cscisai">CS, CIS, AI</option>
-                           <option value="cscysai">CS, CYS, AI</option>
-                           <option value="ciscysai">CIS, CYS, AI</option>
-
-                           <option value="csciscysai">CS, CIS, CYS, AI</option>
-
-                        </optgroup>
-                       </select>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Student's level</label>
-               <!--     <input class="form-control" type="text" id="level" name="level" required>-->
-                     <select class="form-control" type="text" id="level" name="level" required >
-                         <optgroup label="Choose an option">
+                    <label class="font-weight-bold">Student's level*</label>
+                    <small class="text-muted">Student's level according to CCSIT</small>
+                    <select class="form-control" type="text" id="level" name="level" required >
+                        <optgroup label="Choose an option">
                            <option value="1">1</option>
                            <option value="2">2</option>
                            <option value="3">3</option>
@@ -103,52 +97,66 @@
                            <option value="8">8</option>
                            <option value="9">9</option>
                            <option value="10">10</option>
-                              </optgroup>
-                       </select>
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Field</label>
-                    <input class="form-control" type="text" id="field" name="field" required>
+                    <label class="font-weight-bold">Field*</label>
+                    <small class="text-muted">Choose all the fields belong to this PE</small>
+                    <select class="form-control" id="field" name="field" required multiple>
+                        <optgroup label="Choose an option">
+                            {% for f in Field %}
+                            <option value="{{f[0]}}">{{f[0].capitalize()}}</option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Pre-requisite</label>
-                    <input class="form-control" type="text" id="pre_req" name="pre_req" required>
+                    <small class="text-muted">The pre-requisite for this PE</small>
+                    <input class="form-control" type="text" id="pre_requisite" name="pre_requisite" >
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Pre-certificate</label>
-                    <input class="form-control" type="text" id="pre_c" name="pre_c" required>
+                    <small class="text-muted">The pre-certificate for this PE</small>
+                    <input class="form-control" type="text" id="pre_certificate" name="pre_certificate" >
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Programing language</label>
-                    <input class="form-control" type="text" id="prog_l" name="prog_l" required>
+                    <label class="font-weight-bold">Programing language*</label>
+                    <small class="text-muted">The programming language required for this PE</small>
+                    <select class="form-control" id="programing_language" name="programing_language" required multiple>
+                        <optgroup label="Choose an option">
+                                {% for L in language %}
+                            <option value="{{L[0]}}">{{L[0].capitalize()}}</option>
+                                {% endfor %}
+                        </optgroup>
+                   </select>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold ">Duration of exam preparation</label>
-              <!--      <input class="form-control" type="text" id="duration" name="duration" required>
--->
-                       <select class="form-control" id="duration" name="duration" required >
-                         <optgroup label="Choose an option">
-                           <option value="long">Long term - up to year</option>
-                           <option value="short">Short term </option>
-                         </optgroup>
-                       </select>
-
-
+                    <label class="font-weight-bold ">Duration of exam preparation*</label>
+                    <select class="form-control" id="duration" name="duration" required >
+                        <optgroup label="Choose an option">
+                            <option value="short">Short term - less than 6 months</option>
+                            <option value="long">Long term - 6 months or more</option>
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold ">Certificate title</label>
+                    <label class="font-weight-bold ">Certificate title*</label>
                     <input class="form-control" type="text" id="title" name="title" required>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold ">Description</label>
+                    <label class="font-weight-bold ">PE description*</label>
                     <input class="form-control" type="text" id="description" name="description" required>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold ">URL link</label>
-                    <input class="form-control" type="text" id="URLlink" name="URLlink" required>
+                    <label class="font-weight-bold ">PE URL link*</label>
+                    <input class="form-control" type="url" id="url_link" name="url_link" placeholder="https://www.example.com" required>
                 </div>
+
                 <br>
                 <br>
+
                 <div class="container">
                     <div class="row">
                         <div class="col-12 col-md-6">
@@ -163,5 +171,19 @@
         </div>
     </section>
 </main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+<script>
+     $(document).ready(function () {
+      $('#programing_language').selectize({
+          sortField: 'text'
+      });
+      $('#field').selectize({
+          sortField: 'text'
+      });
+  });
+</script>
 </body>
 </html>

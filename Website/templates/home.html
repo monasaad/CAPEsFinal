@@ -80,24 +80,14 @@
                         <tr>
                             <th width='25%' class="text-left">Major</th>
                             <td width='75%'>
-                                {% if row[3] == 'ai' %}          AI
-                                {% elif row[3] == 'cys' %}       CYS
-                                {% elif row[3] == 'cs' %}        CS
-                                {% elif row[3] == 'cis' %}       CIS
-
-                                {% elif row[3] == 'csai' %}      CS, AI
-                                {% elif row[3] == 'cscys' %}     CS ,CYS
-                                {% elif row[3] == 'cscis' %}     CS, CIS
-                                {% elif row[3] == 'ciscys' %}    CIS ,CYS
-                                {% elif row[3] == 'cisai' %}     CIS, AI
-                                {% elif row[3] == 'cysai' %}     CYS, AI
-
-                                {% elif row[3] == 'cscysai' %}   CS, CYS, AI
-                                {% elif row[3] == 'cscisai' %}   CS, CIS, AI
-                                {% elif row[3] == 'csciscys' %}  CS, CIS ,CYS
-                                {% elif row[3] == 'ciscysai' %}  CIS, CYS, AI
-                                {% elif row[3] == 'csciscysai'%} CS, CIS ,CYS, AI
-                                {% endif %}
+                            <ul>
+                            {% for i in s[(loop.index)-1] %}
+                                {% if  "cs"  in i %}<li> Computer Science </li>{%endif %}
+                                {% if  "ais" in i %}<li> Artificial Intelligence </li>{%endif %}
+                                {% if  "cis" in i %}<li> Computer Information System </li>{%endif %}
+                                {% if  "cys" in i %}<li> Computer Cyber Security</li>{%endif %}
+                            {% endfor %}
+                            </ul>
                             </td>
                         </tr>
                         <tr>
@@ -108,9 +98,21 @@
                         <tr>
                             <th width='25%' class="text-left">Field</th>
 
-                            <td width='75%'>{{ (row[5]).capitalize() }}</td>
+                            <td width='75%'>
+                               <ul>
+                                {% for i in f[(loop.index)-1] %}
+                                    <li> {{ (i).capitalize() }}</li>
+                                    {% endfor %}
+                               </ul>
+                                    </td>
                         </tr>
-                        {% if  (row[6]).lower() != ('null').lower() %}
+                        <!-- here -->
+                        <!--<tr>
+                                <th width='25%' class="text-left">Pre-requisite</th>
+
+                                <td width='75%'>{{ (row[6]) }}</td>
+                        </tr>-->
+                         {% if  (row[6]).lower() != ('null').lower() %}
                             <tr>
                                 <th width='25%' class="text-left">Pre-requisite</th>
 
@@ -118,6 +120,12 @@
                             </tr>
                         {% endif %}
 
+                        <!-- here -->
+                        <!--<tr>
+                            <th width='25%' class="text-left">Pre-certificate</th>
+
+                            <td width='75%'>{{ (row[7]) }}</td>
+                        </tr>-->
                         {% if  (row[7]).lower() != ('null').lower() %}
                             <tr>
                                 <th width='25%' class="text-left">Pre-certificate</th>
@@ -129,7 +137,13 @@
                         {% if  (row[8]).lower() != ('null').lower() %}
                             <tr>
                                 <th width='25%' class="text-left">Programing language</th>
-                                <td width='75%'>{{ (row[8]).capitalize() }}</td>
+                                <td width='75%'>
+                                <ul>
+                                {% for i in l[(loop.index)-1] %}
+                                    <li> {{ (i).capitalize() }}</li>
+                                    {% endfor %}
+                               </ul>
+                                </td>
                             </tr>
                         {% endif %}
                         <tr>

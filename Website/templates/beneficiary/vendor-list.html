@@ -63,12 +63,12 @@
             <div class="row">
                 {% for row in c %}
                     <div class="col-md-6 col-lg-4">
-                        <div class="card border-0"><a href="{{ url_for('ViewVendorDetails', v_username = row[0] ) }}">
+                        <div class="card border-0"><a href="{{ url_for('ViewVendorDetails', vendor_username = row[0] ) }}">
                             <img src="static/logos/{{ row[4] }}" width="400" height="300" alt="Card Image"
                                  class="card-img-top scale-on-hover"></a>
                             <div class="card-body">
                                 <h6>
-                                    <a href="{{ url_for('ViewVendorDetails', v_username=row[0] ) }}">{{ row[0].title() }}</a>
+                                    <a href="{{ url_for('ViewVendorDetails', vendor_username=row[0] ) }}">{{ row[0].title() }}</a>
                                 </h6>
                             </div>
                         </div>
